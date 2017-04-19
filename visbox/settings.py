@@ -25,7 +25,7 @@ SECRET_KEY = '_si@5$=iq_8jo76_)+o+13w_kn9fl5fjwx6^&7$b2s3+*50^!u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'visbox.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'ghts','templates'),],
+        'DIRS': [os.path.join(BASE_DIR, 'visbox','templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,3 +123,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
+LOGIN_REDIRECT_URL = 'core.views.index'

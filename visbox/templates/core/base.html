@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>
+                {% block title %}{% endblock %}
+            </title>
+            {% block head %}
+            {% endblock %}
+            {% load staticfiles %}    
+            <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
+            <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
+            </head>
+        <body class="dashboard">
+        <div id="container" data-admin-utc-offset="0">
+            <!-- Header -->
+        <div id="header">
+            <div id="branding">
+                <h1 id="site-name">
+                    <a href="{% url 'core.views.index' %}">Home</a>
+                </h1>
+            </div>
+            <div id="user-tools">
+            {% if user.is_authenticated %}
+                {% block welcome-msg %}
+                    Welcome,
+                    <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+                {% endblock %}
+                <a href="{% url 'core.views.start' %}">Start visualising</a> /
+                <a href="{% url 'core.views.gallery' %}">Gallery</a> /
+                {% block userlinks %}
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:login' %}">Administration</a> /
+                {% endif %}
+                    <a href="{% url 'core.views.logout' %}">Log out</a>
+                {% endblock %}
+            {% else %}
+                <a href="{% url 'core.views.login' %}">Log in</a> /
+                <a href="{% url 'core.views.signup' %}">Sign up</a>
+            {% endif %}
+            </div>
+            
+        </div>
+        <!-- END Header -->
+                {% block content %}
+                {% endblock %}
+        </div>
+    </body>
+    </html>

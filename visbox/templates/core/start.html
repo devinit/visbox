@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+    {% block title %} DI Vis-box Start Visualising {% endblock %}
+    {% block head %}
+    {% endblock %}    
+    {% block content %}
+    <div id="content" style="width:100%">
+    <p>Please select a dataset below, or upload a new one.</p>
+    <select>
+    {% for dataset in datasets %}
+        <option value={{dataset.pk}}>{{dataset.name}}</option>
+    {% endfor %}
+    </select>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-row">
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+              <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <div class="submit-row">
+            <button type="submit">Upload</button>
+        </div>
+        {% for html_table in dataset_tables%}
+            {{html_table|safe}}
+        {% endfor %}
+    </div>
+    {% endblock %}

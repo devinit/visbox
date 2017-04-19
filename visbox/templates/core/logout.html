@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block head %}
+    {% load staticfiles %}    
+    <link rel=stylesheet href="{% static "core/css/login.css" %}" type="text/css">
+{% endblock %}
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<h1>Logged out</h1>
+<p>Thanks for spending some quality time with the visbox today.</p>
+{% endblock %}

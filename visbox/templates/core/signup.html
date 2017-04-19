@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+{% block head %}
+    {% load staticfiles %}    
+    <link rel=stylesheet href="{% static "core/css/login.css" %}" type="text/css">
+{% endblock %}
+{% block content %}
+        <div class="login">
+        <div id="container">
+        <div id="header">
+            <div id="branding">
+            <h1 id="site-name"><a href="{% url 'core.views.signup' %}">
+                User sign up
+            </a></h1>
+            </div>
+        </div>
+        <div id="logincontent" class="colM">
+            <div id="content-main">
+            <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-row">
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {% if field.help_text %}
+                  <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <p style="color: red">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="submit-row">
+                <button type="submit">Sign me up!</button>
+            </div>
+          </form>
+        </div>
+        </div>
+        </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block head %}
+    {% load staticfiles %}    
+    <link rel=stylesheet href="{% static "core/css/login.css" %}" type="text/css">
+{% endblock %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <div class="login">
+        <div id="container">
+        <div id="header">
+            <div id="branding">
+            <h1 id="site-name"><a href="{% url 'core.views.login' %}">
+                User login
+            </a></h1>
+            </div>
+        </div>
+        <div id="logincontent" class="colM">
+            <div id="content-main">
+                <form method="post">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <div class="submit-row">
+                    <button type="submit">Login</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+        </div>
+{% endblock %}
