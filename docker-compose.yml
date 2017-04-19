@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - visboxdata:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/src"
+    ports:
+      - "80:80"
+    depends_on:
+     - db
+     
+volumes:
+  visboxdata:
+    external: true
