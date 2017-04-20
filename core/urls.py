@@ -9,5 +9,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'template_name': 'core/logout.html'}, name='core.views.logout'),
     url(r'^signup/$', views.signup, name='core.views.signup'),
     url(r'^start/$', views.start, name='core.views.start'),
+    url(r'^dataset/(?P<datasetPK>\d+)/$', views.dataset, name='core.views.dataset'),
+    url(r'^deleteDataset/(?P<datasetPK>\d+)/$', views.deleteDataset, name='core.views.deleteDataset'),
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
 ]

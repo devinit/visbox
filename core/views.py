@@ -6,6 +6,7 @@ from core.models import Dataset
 from django.contrib.auth.models import User
 import pandas as pd
 from StringIO import StringIO
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -27,6 +28,7 @@ def signup(request):
         form = SignUpForm()
     return render(request,'core/signup.html',{'form':form})
 
+@login_required
 def start(request):
     user = request.user
     if request.method == 'POST':
@@ -38,13 +40,34 @@ def start(request):
             dataset.save()
     form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
-    dataset_tables = []
     for dataset in datasets:
-        dataset_tables.append(pd.read_csv(StringIO(dataset.data),sep=dataset.sep).to_html())
-    return render(request,'core/start.html', {"user":user,"datasets":datasets,"form":form,"dataset_tables":dataset_tables})
+        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+        dataset.table = df.to_html()
+    return render(request,'core/start.html', {"user":user,"datasets":datasets,"form":form})
 
+@login_required
 def gallery(request):
     user = request.user
     return render_to_response('core/gallery.html', {"user":user})
+
+@login_required
+def dataset(request,datasetPK):
+    user = request.user
+    dataset = get_object_or_404(Dataset,pk=datasetPK)
+    dataset.table = pd.read_csv(StringIO(dataset.data),sep=dataset.sep).to_html()
+    return render_to_response('core/dataset.html', {"user":user,"dataset":dataset})
+
+@login_required
+def deleteDataset(request,datasetPK):
+    if request.method == 'POST':
+        user = request.user
+        dataset = get_object_or_404(Dataset,pk=datasetPK)
+        if dataset.creator == user:
+            dataset.delete()
+            return HttpResponse('OK')
+        else:
+            return HttpResponseForbidden()
+    else:
+        return HttpResponseForbidden()
         
 

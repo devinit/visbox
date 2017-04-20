@@ -5,12 +5,65 @@
     {% endblock %}    
     {% block content %}
     <div id="content" style="width:100%">
-    <p>Please select a dataset below, or upload a new one.</p>
-    <select>
+    <div style="width:50%;float:left;">
+    <p>Please select a dataset from the dropdown below, or upload a new one by copying and pasting from Excel or Open Office to the right.</p>
+    <select id="datasetSelector">
     {% for dataset in datasets %}
-        <option value={{dataset.pk}}>{{dataset.name}}</option>
+        <option value="{{dataset.pk}}">{{dataset.name}} ({{dataset.created}})</option>
     {% endfor %}
     </select>
+    <script>
+        // using jQuery
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        };
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        goToDSPage = function(){
+            var pk = $('#datasetSelector').val(),
+            dsUrl = '{% url 'core.views.dataset' 0 %}'.replace("0",pk);
+            location.href = dsUrl;
+        };
+        goToDeletePage = function(){
+            var sure = confirm("Are you sure you want to delete this dataset?");
+            if (sure) {
+                var pk = $('#datasetSelector').val(),
+                dsUrl = '{% url 'core.views.deleteDataset' 0 %}'.replace("0",pk);
+    
+                $.post(dsUrl,function(){
+                    location.href = "{% url 'core.views.start' %}";
+                    }).fail(function(){
+                    alert("Sorry, your delete request failed. Please try again later.");
+                    });
+            };           
+        };
+    </script>
+    <button onclick="goToDSPage()">Go</button>
+    <button onclick="goToDeletePage()">Delete</button>
+    </div>
+    <div style="width:50%;float:left;">
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
@@ -28,8 +81,22 @@
         <div class="submit-row">
             <button type="submit">Upload</button>
         </div>
-        {% for html_table in dataset_tables%}
-            {{html_table|safe}}
-        {% endfor %}
+    </form>
     </div>
+    <h1>Data preview</h1>
+    {% for dataset in datasets %}
+        <div class ='tables' id="{{dataset.pk}}" style="display:none;">{{dataset.table|safe}}</div>
+    {% endfor %}
+    </div>
+    <script>
+        var pk = $('#datasetSelector').val();
+        $('div.tables').hide();
+        $('div#'+pk).show();
+        
+        $('#datasetSelector').on('change',function(){
+            var pk = $('#datasetSelector').val();
+            $('div.tables').hide();
+            $('div#'+pk).show();
+        })
+    </script>
     {% endblock %}
