@@ -1,0 +1,270 @@
+{% extends 'core/base.html' %}
+
+    {% block title %} Column chart {% endblock %}
+    {% block head %}
+    <style>
+    #vis{
+      padding-left:10px;
+    }
+    
+    select {
+        font-size: 1em;
+        margin:0.67em;
+        -webkit-margin-before: 0.67em;
+        -webkit-margin-after: 0.67em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+    
+    h1 {
+      font-family: Arial;
+      font-weight: normal;
+    }
+    
+    #tooltip{
+                position:absolute;
+                background:white;
+                border:solid black 1px;
+                border-radius:5px;
+                padding:5px;
+                display:none;
+            }
+    
+    </style>
+    {% endblock %}    
+    {% block content %}
+    <div style="float:left;width:20%;overflow-y:scroll;">
+      <form method="post" action="{% url 'core.views.createVis' %}">
+        <input type="hidden" name="chart_type" value="column">
+        <input type="hidden" name="datasetPK" value="{{dataset.pk}}">
+        {% csrf_token %}
+      <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Sizing</a>
+      <div style="display:none;" class="toggle">
+        <p>Width: <input type="number" name="width" value="960"></p>
+        <p>Height: <input type="number" name="height" value="500"></p>
+        <p>Padding-top: <input type="number" name="padding_top" value="20"></p>
+        <p>Padding-right: <input type="number" name="padding_right" value="100"></p>
+        <p>Padding-bottom: <input type="number" name="padding_bottom" value="100"></p>
+        <p>Padding-left: <input type="number" name="padding_left" value="100"></p>
+      </div>
+      <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Indicators</a>
+      <div style="display:none;" class="toggle">
+        <p>X: <select id="x_indicator" name="x_indicator"></select></p>
+        <p>Sort X ascending: <input type="radio" name="sort" value="xasc"></p>
+        <p>Sort X descending: <input type="radio" name="sort" value="xdes"></p>
+        <p>Y: <select id="y_indicator" name="y_indicator"></select></p>
+        <p>Sort Y ascending: <input type="radio" name="sort" value="yasc"></p>
+        <p>Sort Y descending: <input type="radio" name="sort" value="ydes"></p>
+        <p>Y maximum auto:<input type="radio" name="y_maximum" value="auto" checked></p>
+        <p>Y maximum manual:<input type="radio" name="y_maximum" value="manual"></p>
+        <p>Y maximum manual value: <input type="number" name="y_maximum_value" value="0" step="0.00001"></p>
+      </div>
+      <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Colours and labels</a>
+      <div style="display:none;" class="toggle">
+        <p>Column colour: <input type="text" name="colour" value="#e84439"></p>
+        <p>X label: <input type="text" name="x_label"></p>
+        <p>Y label: <input type="text" name="y_label"></p>
+        <p>X axis text rotation<input type="number" name="x_text_rotation" value="45"></p>
+      </div>
+      <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>
+      </form>
+    </div>
+    <div style="float:left;width:80%">
+      <svg width="960" height="500" id="vis">
+        <text id="yaxislabel" transform="rotate(-90)" style="font-weight:bold;"></text>
+        <text id="xaxislabel" style="font-weight:bold;"></text>
+      </svg>
+      <div id="tooltip"></div>
+    </div>
+<script>
+function tip(e) {
+    $('#tooltip').show();
+    var tooltip = $('#tooltip');
+    for (var i=tooltip.length; i--;) {
+        tooltip[i].style.left = e.pageX+15 + 'px';
+        tooltip[i].style.top = e.pageY-15 + 'px';
+    }
+};
+
+var defaultColour = "#e84439";
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 100, bottom: 100, left: 100},
+    svgWidth = svg.attr("width"),
+    svgHeight = svg.attr("height"),
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
+    if (error) throw error;
+    
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var xIndicators = [
+                       {% for indicator in dataset.categorical %}
+                         "{{indicator}}",
+                       {% endfor %}
+                       ];
+    var xSelect = d3.select("#x_indicator");
+      
+    xSelect.selectAll("option.x").data(xIndicators).enter().append("option")
+          .attr('class','x')
+          .attr('value',function(d){return d})
+          .text(function(d){return d;});
+          
+    var yIndicators = [
+                       {% for indicator in dataset.numerical %}
+                         "{{indicator}}",
+                       {% endfor %}
+                       ];
+    var ySelect = d3.select("#y_indicator");
+      
+    ySelect.selectAll("option.y").data(yIndicators).enter().append("option")
+          .attr('class','y')
+          .attr('value',function(d){return d})
+          .text(function(d){return d;});
+      
+    var xIndicator = $("#x_indicator").val();
+    var yIndicator = $("#y_indicator").val();
+    
+    $('#xaxislabel')
+      .text(xIndicator)
+      .attr("x",(svgWidth-$('#xaxislabel').width()+margin.left-margin.right)/2)
+      .attr("y",svgHeight-$('#xaxislabel').height());
+    $("input[name='x_label']").val(xIndicator);
+    $('#yaxislabel')
+    .text(yIndicator)
+    .attr("y",$('#yaxislabel').width())
+    .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
+    $("input[name='y_label']").val(yIndicator);
+    
+    var x = d3.scaleBand().rangeRound([0, width]);
+    var xCategories = data.map(function(d){return d[xIndicator]});
+    x.domain(xCategories);
+    
+    var y = d3.scaleLinear().rangeRound([height, 0]);
+    var ymaxauto = $("input:checked[name='y_maximum']").val();
+    if (ymaxauto=="auto") {
+      var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
+    }else{
+      var ymax = parseFloat($("input[name='y_maximum_value']").val());
+    };
+    y.domain([0, ymax]);
+    $("input[name='y_maximum_value']").val(ymax)
+    y.domain([0, d3.max(data, function(d) {return Number(d[yIndicator]); })]);
+    
+    var xaxis = g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+    
+    var yaxis = g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        
+    yaxis.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Frequency");
+    
+    function update() {
+      var svgWidth = parseInt($("input[name='width']").val());
+      var svgHeight = parseInt($("input[name='height']").val());
+      var pTop = parseInt($("input[name='padding_top']").val());
+      var pRight = parseInt($("input[name='padding_right']").val());
+      var pLeft = parseInt($("input[name='padding_left']").val());
+      var pBottom = parseInt($("input[name='padding_bottom']").val());
+      var xRotation = parseInt($("input[name='x_text_rotation']").val());
+      var selectedColour=$("input[name='colour']").val()==""?defaultColour:$("input[name='colour']").val();
+      var xIndicator = $("#x_indicator").val();
+      var yIndicator = $("#y_indicator").val();
+      var sort = $("input:checked[name='sort']");
+      
+      margin = {top: pTop, right: pRight, bottom: pBottom, left: pLeft};
+      svg.attr("width",svgWidth)
+      svg.attr("height",svgHeight)
+      
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+      
+      g.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+        if (sort.length>0) {
+            var sortType = sort.val();
+            if (sortType=="xasc") {
+                data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
+            }else if (sortType=="xdes") {
+                data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
+            }else if (sortType=="yasc") {
+                data.sort(function(a,b) {return a[yIndicator]-b[yIndicator];})
+            }else if (sortType=="ydes") {
+                data.sort(function(a,b) {return b[yIndicator]-a[yIndicator];})
+            };
+        };
+        
+        var xLabel = $("input[name='x_label']").val();
+        var yLabel = $("input[name='y_label']").val();
+        $('#xaxislabel')
+        .text(xLabel)
+        .attr("x",(svgWidth-$('#xaxislabel').width()+margin.left-margin.right)/2)
+        .attr("y",svgHeight-$('#xaxislabel').height());
+        $('#yaxislabel')
+        .text(yLabel)
+        .attr("y",$('#yaxislabel').width())
+        .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2));
+        
+        var x = d3.scaleBand().rangeRound([0, width]);
+        var xCategories = data.map(function(d){return d[xIndicator]});
+        x.domain(xCategories);
+          
+        var y = d3.scaleLinear().rangeRound([height, 0]);
+        var ymaxauto = $("input:checked[name='y_maximum']").val();
+        if (ymaxauto=="auto") {
+          var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
+        }else{
+          var ymax = parseFloat($("input[name='y_maximum_value']").val());
+        };
+        y.domain([0, ymax]);
+    
+        yaxis.transition().call(d3.axisLeft(y))
+        xaxis.transition().call(d3.axisBottom(x))
+        xaxis.attr("transform", "translate(0," + height + ")")
+        xaxis.selectAll("text")
+          .attr("transform", "rotate("+xRotation+")")
+          .style("text-anchor", "start");
+        
+        var bars = g.selectAll(".bar").data(data)
+          .attr("class", "bar")
+          .style("fill",selectedColour)
+          .attr("onmouseout","$('#tooltip').hide()")
+          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+          .attr("y", function(d) { return y(d[yIndicator]); })
+          .attr("width", (width/xCategories.length)-1)
+          .attr("height", function(d) { return height - y(d[yIndicator]); })
+          .attr("onmouseover",function(d){return "$('#tooltip').text('"+d[yIndicator]+"')"});
+          
+          bars.enter().append("rect")
+          .attr("class", "bar")
+          .style("fill",selectedColour)
+          .attr("onmouseout","$('#tooltip').hide()")
+          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+          .attr("y", function(d) { return y(d[yIndicator]); })
+          .attr("width", (width/xCategories.length)-1)
+          .attr("height", function(d) { return height - y(d[yIndicator]); })
+          .attr("onmouseover",function(d){return "$('#tooltip').text('"+d[yIndicator]+"')"});
+          
+        bars.exit().remove()
+          
+        $('.bar').on("mousemove",tip)
+    };
+    
+    update() 
+    
+    $('select').change(function(){update()});
+    $('input').change(function(){update()});
+});
+</script>
+    {% endblock %}

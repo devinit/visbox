@@ -6,6 +6,36 @@
     {% block content %}
     <div id="content" style="width:100%">
     <h1>{{dataset.name}}</h1>
-    {{dataset.table|safe}}
+    <div style="float:left;width:20%">
+        <h2>Data types</h2>
+        <table>
+            <tr><th>Variable</th><th>Type</th></tr>
+            {% for var, type in dataset.types%}
+                <tr><td>{{var}}</td><td>{{type}}</td></tr>
+            {% endfor %}
+        </table>
+        
+    </div>
+    <div style="float:left;width:80%">
+        Select a visualisation here.
+        <div style="width:710px;">
+        <h3>Recommended visualisations</h3>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Column"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "stacked-column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Stacked column"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "bar" dataset.pk %}"><img src="http://placehold.it/350x150?text=Bar"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "table" dataset.pk %}"><img src="http://placehold.it/350x150?text=Table"></a></div>
+        </div>
+        <div style="width:710px;">
+        <h3>Other visualisations</h3>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "stacked-bar" dataset.pk %}"><img src="http://placehold.it/350x150?text=Stacked bar"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "pie-chart" dataset.pk %}"><img src="http://placehold.it/350x150?text=Pie chart"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "line" dataset.pk %}"><img src="http://placehold.it/350x150?text=Line"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.create' "bubble" dataset.pk %}"><img src="http://placehold.it/350x150?text=Bubble"></a></div>
+        </div>
+    </div>
+    <div style="float:left;width:100%">
+        <h2>Data preview</h2>
+        {{dataset.table|safe}}
+    </div>
     </div>
     {% endblock %}

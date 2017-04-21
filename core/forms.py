@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from core.models import Dataset
+from core.models import Dataset, Visualisation
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False)
@@ -17,3 +17,8 @@ class UploadForm(ModelForm):
     class Meta:
         model = Dataset
         fields = ['name','data']
+        
+class VisForm(ModelForm):
+    class Meta:
+        model = Visualisation
+        exclude = ['creator','dataset']

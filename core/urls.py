@@ -10,6 +10,10 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='core.views.signup'),
     url(r'^start/$', views.start, name='core.views.start'),
     url(r'^dataset/(?P<datasetPK>\d+)/$', views.dataset, name='core.views.dataset'),
+    url(r'^csv/(?P<datasetPK>\d+).csv/$', views.csv, name='core.views.csv'),
     url(r'^deleteDataset/(?P<datasetPK>\d+)/$', views.deleteDataset, name='core.views.deleteDataset'),
+    url(r'^create/(?P<chart>[\w\-]+)/(?P<datasetPK>\d+)/$', views.create, name='core.views.create'),
+    url(r'^view/(?P<chartPK>\d+)/$', views.viewVis, name='core.views.viewVis'),
+    url(r'^createVis/$', views.createVis, name='core.views.createVis'),
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
 ]
