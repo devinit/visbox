@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+    {% block title %} Bar chart {% endblock %}
+    {% block head %}
+    <style>
+    #vis{
+      padding-left:10px;
+    }
+    
+    select {
+        font-size: 1em;
+        margin:0.67em;
+        -webkit-margin-before: 0.67em;
+        -webkit-margin-after: 0.67em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+    
+    h1 {
+      font-family: Arial;
+      font-weight: normal;
+    }
+    
+    #tooltip{
+                position:absolute;
+                background:white;
+                border:solid black 1px;
+                border-radius:5px;
+                padding:5px;
+                display:none;
+            }
+            
+    button {display:block;}
+    
+    </style>
+    {% endblock %}    
+    {% block content %}
+    <div style="float:left;width:20%;overflow-y:scroll;">
+      <form id="visform" method="post" action="{% url 'core.views.createVis' 'bar' dataset.pk %}">
+        {% csrf_token %}
+      <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Customize and style</a>
+      <div style="display:none;" class="toggle">
+      {{form.as_p}}
+      </div>
+      <button type="submit" onclick="$('div.toggle').slideDown()">Save chart and configuration</button>
+      </form>
+    </div>
+    <div style="float:left;width:80%">
+      {% include "core/bar/vis.html" %}    
+    </div>
+<script>
+$('#visform').on('keyup keypress', function(e) {
+  var keyCode = e.keyCode || e.which;
+  if (keyCode === 13) { 
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
+    {% endblock %}

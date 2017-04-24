@@ -37,13 +37,18 @@ class Visualisation(models.Model):
     z_indicator = models.CharField(null=True,blank=True,max_length=255)
     c_indicator = models.CharField(null=True,blank=True,max_length=255)
     sort = models.CharField(null=True,blank=True,max_length=255)
-    y_maximum = models.CharField(null=True,blank=True,max_length=255)
+    y_maximum = models.CharField(null=True,blank=True,max_length=255,default="auto")
     y_maximum_value = models.DecimalField(null=True,blank=True,max_digits=99,decimal_places=5)
-    colour = models.CharField(null=True,blank=True,max_length=255)
+    x_maximum = models.CharField(null=True,blank=True,max_length=255,default="auto")
+    x_maximum_value = models.DecimalField(null=True,blank=True,max_digits=99,decimal_places=5)
+    colour = models.CharField(null=True,blank=True,max_length=255,default="#e84439")
     x_label = models.CharField(null=True,blank=True,max_length=255)
     y_label = models.CharField(null=True,blank=True,max_length=255)
     x_text_rotation = models.IntegerField(default=45)
     
     class Meta:
         ordering = ['-created']
+        
+    def get_absolute_url(self):
+        return reverse('core.views.viewVis',args=[self.pk])
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.http import *
 from django.contrib.auth import authenticate, login, logout
-from core.forms import SignUpForm, UploadForm, VisForm
+from core.forms import *
 from core.models import Dataset, Visualisation
 from django.contrib.auth.models import User
 import pandas as pd
@@ -50,7 +50,8 @@ def start(request):
 @login_required
 def gallery(request):
     user = request.user
-    return render_to_response('core/gallery.html', {"user":user})
+    visualisations = Visualisation.objects.all()
+    return render_to_response('core/gallery.html', {"user":user,"visualisations":visualisations})
 
 @login_required
 def dataset(request,datasetPK):
@@ -76,36 +77,108 @@ def deleteDataset(request,datasetPK):
         return HttpResponseForbidden()
     
 @login_required
-def create(request,chart,datasetPK):
+def createVis(request,chart,datasetPK):
     user = request.user
     dataset = get_object_or_404(Dataset,pk=datasetPK)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-    dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+    #Column charts
     if chart=="column":
-        return render(request,'core/column.html', {"user":user,"dataset":dataset})
-    return render_to_response('core/construction.html', {"user":user})
-
-@login_required
-def createVis(request):
-    user = request.user
-    if request.method=="POST":
-        form = VisForm(request.POST)
-        if form.is_valid():
-            visualisation = form.save(commit=False)
-            visualisation.creator = User.objects.get(username=user)
-            visualisation.dataset = Dataset.objects.get(pk=request.POST.get("datasetPK"))
-            visualisation.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = ColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'column'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/column/create.html', {"user":user,"dataset":dataset,"form":form})
         else:
-            #Vis invalid
-            return HttpResponse("Sorry, something went wrong.")
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = ColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+            else:
+                form = ColumnForm(x=dataset.categorical,y=dataset.numerical)
+            return render(request,'core/column/create.html', {"user":user,"dataset":dataset,"form":form})
+    #Bar charts
+    elif chart=="bar":
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = BarForm(request.POST,x=dataset.numerical,y=dataset.categorical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'bar'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form})
+        else:
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = BarForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.numerical,y=dataset.categorical)
+            else:
+                form = BarForm(x=dataset.numerical,y=dataset.categorical)
+            return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form})
     else:
-        return HttpResponse("Sorry, something went wrong.")
+        return render_to_response('core/construction.html', {"user":user})
     
 @login_required
 def viewVis(request,chartPK):
-    return HttpResponse(chartPK)
+    user = request.user
+    visualisation = get_object_or_404(Visualisation,pk=chartPK)
+    dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
+    dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+    dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+    dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+    if visualisation.chart_type == "column":
+        form = ColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        return render(request,'core/column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "bar":
+        form = BarForm(instance=visualisation,x=dataset.numerical,y=dataset.categorical)
+        return render(request,'core/bar/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
+
+@login_required
+def editVis(request,chartPK):
+    user = request.user
+    visualisation = get_object_or_404(Visualisation,pk=chartPK)
+    dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
+    dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+    dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+    dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+    if visualisation.chart_type == "column":
+        form = ColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "bar":
+        form = BarForm(request.POST or None, instance=visualisation,x=dataset.numerical,y=dataset.categorical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/bar/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    return HttpResponse("This is where you would edit chart with primary key: "+str(chartPK))
+
+@login_required
+def deleteVis(request,chartPK):
+    user = request.user
+    visualisation = get_object_or_404(Visualisation,pk=chartPK)
+    if user == visualisation.creator:
+        visualisation.delete()
+        return redirect('core.views.gallery')
+    else:
+        return HttpResponseForbidden()
 
 def csv(request,datasetPK):
     user = request.user

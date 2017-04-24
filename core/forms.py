@@ -22,3 +22,54 @@ class VisForm(ModelForm):
     class Meta:
         model = Visualisation
         exclude = ['creator','dataset']
+        
+class ColumnForm(ModelForm):
+    class Meta:
+        model = Visualisation
+        fields = ('dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
+                  'x_indicator','y_indicator','sort','y_maximum','y_maximum_value','colour','x_label'
+                  ,'y_label','x_text_rotation')
+        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
+        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
+        widgets = {
+            'dataset':forms.HiddenInput(),
+            'sort':forms.RadioSelect(choices=SORT_CHOICES),
+            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES)
+        }
+    def __init__(self, *args, **kwargs):
+        x = kwargs.pop('x')
+        y = kwargs.pop('y')
+        super(ColumnForm, self).__init__(*args, **kwargs)
+        self.fields['x_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in x]
+        )
+        self.fields['y_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in y]
+        )
+        self.fields['dataset'].required = False
+        
+class BarForm(ModelForm):
+    class Meta:
+        model = Visualisation
+        fields = ('dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
+                  'x_indicator','y_indicator','sort','x_maximum','x_maximum_value','colour','x_label'
+                  ,'y_label','x_text_rotation')
+        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
+        X_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
+        widgets = {
+            'dataset':forms.HiddenInput(),
+            'sort':forms.RadioSelect(choices=SORT_CHOICES),
+            'x_maximum':forms.RadioSelect(choices=X_AUTO_CHOICES)
+        }
+    def __init__(self, *args, **kwargs):
+        x = kwargs.pop('x')
+        y = kwargs.pop('y')
+        super(BarForm, self).__init__(*args, **kwargs)
+        self.fields['x_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in x]
+        )
+        self.fields['y_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in y]
+        )
+        self.fields['dataset'].required = False
+        

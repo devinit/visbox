@@ -12,8 +12,9 @@ urlpatterns = [
     url(r'^dataset/(?P<datasetPK>\d+)/$', views.dataset, name='core.views.dataset'),
     url(r'^csv/(?P<datasetPK>\d+).csv/$', views.csv, name='core.views.csv'),
     url(r'^deleteDataset/(?P<datasetPK>\d+)/$', views.deleteDataset, name='core.views.deleteDataset'),
-    url(r'^create/(?P<chart>[\w\-]+)/(?P<datasetPK>\d+)/$', views.create, name='core.views.create'),
+    url(r'^delete/(?P<chartPK>\d+)/$', views.deleteVis, name='core.views.deleteVis'),
+    url(r'^create/(?P<chart>[\w\-]+)/(?P<datasetPK>\d+)/$', views.createVis, name='core.views.createVis'),
     url(r'^view/(?P<chartPK>\d+)/$', views.viewVis, name='core.views.viewVis'),
-    url(r'^createVis/$', views.createVis, name='core.views.createVis'),
+    url(r'^edit/(?P<chartPK>\d+)/$', views.editVis, name='core.views.editVis'),
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
 ]
