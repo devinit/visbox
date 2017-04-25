@@ -9,7 +9,12 @@
     <p>Please select a dataset from the dropdown below, or upload a new one by copying and pasting from Excel or Open Office to the right.</p>
     <select id="datasetSelector">
     {% for dataset in datasets %}
+        {% if not user.is_staff %}
         <option value="{{dataset.pk}}">{{dataset.name}} ({{dataset.created}})</option>
+        {% endif %}
+    {% endfor %}
+    {% for dataset in staff_datasets %}
+        <option value="{{dataset.pk}}">{{dataset.name}} (Staff Dataset; {{dataset.created}})</option>
     {% endfor %}
     </select>
     <script>
@@ -85,6 +90,11 @@
     </div>
     <h1>Data preview</h1>
     {% for dataset in datasets %}
+        {% if not user.is_staff %}
+        <div class ='tables' id="{{dataset.pk}}" style="display:none;">{{dataset.table|safe}}</div>
+        {% endif %}
+    {% endfor %}
+    {% for dataset in staff_datasets %}
         <div class ='tables' id="{{dataset.pk}}" style="display:none;">{{dataset.table|safe}}</div>
     {% endfor %}
     </div>

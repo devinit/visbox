@@ -33,6 +33,7 @@ def signup(request):
 @login_required
 def start(request):
     user = request.user
+    staff = User.objects.filter(is_staff=True)
     if request.method == 'POST':
         form = UploadForm(request.POST)
         if form.is_valid():
@@ -42,10 +43,14 @@ def start(request):
             dataset.save()
     form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
+    staff_datasets = Dataset.objects.filter(creator__in=staff)
     for dataset in datasets:
         df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
         dataset.table = df.to_html()
-    return render(request,'core/start.html', {"user":user,"datasets":datasets,"form":form})
+    for dataset in staff_datasets:
+        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+        dataset.table = df.to_html()
+    return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"form":form})
 
 @login_required
 def gallery(request):
@@ -56,12 +61,14 @@ def gallery(request):
 @login_required
 def dataset(request,datasetPK):
     user = request.user
+    staff = User.objects.filter(is_staff=True)
+    templates = Visualisation.objects.filter(save_as_template=True,creator__in=staff)
     dataset = get_object_or_404(Dataset,pk=datasetPK)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
     dataset.header = list(dataset.df)
     dataset.types = [(header, dataset.df.dtypes[header]) for header in dataset.header]
     dataset.table = dataset.df.to_html()
-    return render_to_response('core/dataset.html', {"user":user,"dataset":dataset})
+    return render_to_response('core/dataset.html', {"user":user,"dataset":dataset,"templates":templates})
 
 @login_required
 def deleteDataset(request,datasetPK):
@@ -129,6 +136,78 @@ def createVis(request,chart,datasetPK):
             else:
                 form = BarForm(x=dataset.numerical,y=dataset.categorical)
             return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form})
+    #stacked column charts
+    elif chart=="stacked-column":
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = StackedColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'stacked-column'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/stacked-column/create.html', {"user":user,"dataset":dataset,"form":form})
+        else:
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+            else:
+                form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
+            return render(request,'core/stacked-column/create.html', {"user":user,"dataset":dataset,"form":form})
+    #donut charts
+    elif chart=="donut":
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = DonutForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'donut'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/donut/create.html', {"user":user,"dataset":dataset,"form":form})
+        else:
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = DonutForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+            else:
+                form = DonutForm(x=dataset.categorical,y=dataset.numerical)
+            return render(request,'core/donut/create.html', {"user":user,"dataset":dataset,"form":form})
+    #donut charts
+    elif chart=="pie":
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = DonutForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'pie'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/pie/create.html', {"user":user,"dataset":dataset,"form":form})
+        else:
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = DonutForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+            else:
+                form = DonutForm(x=dataset.categorical,y=dataset.numerical)
+            return render(request,'core/pie/create.html', {"user":user,"dataset":dataset,"form":form})
     else:
         return render_to_response('core/construction.html', {"user":user})
     
@@ -146,6 +225,15 @@ def viewVis(request,chartPK):
     if visualisation.chart_type == "bar":
         form = BarForm(instance=visualisation,x=dataset.numerical,y=dataset.categorical)
         return render(request,'core/bar/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "stacked-column":
+        form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        return render(request,'core/stacked-column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "donut":
+        form = DonutForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        return render(request,'core/donut/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "pie":
+        form = DonutForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        return render(request,'core/pie/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
 
 @login_required
@@ -168,6 +256,24 @@ def editVis(request,chartPK):
             form.save()
             return redirect('core.views.viewVis',chartPK=visualisation.pk)
         return render(request,'core/bar/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "stacked-column":
+        form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/stacked-column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "donut":
+        form = DonutForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/donut/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "pie":
+        form = DonutForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/pie/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     return HttpResponse("This is where you would edit chart with primary key: "+str(chartPK))
 
 @login_required

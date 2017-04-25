@@ -38,12 +38,48 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       
     var xIndicator = $("select[name='x_indicator']").val();
     var yIndicator = $("select[name='y_indicator']").val();
+    var groupBy = $("select[name='group_by']").val();
+    var divisor = parseFloat($("input[name='unit_divisor']").val());
     var format_entry = $("input[name='label_format']").val();
     try{
       var format = d3.format(format_entry); 
     }catch(err){
       var format = d3.format(",.2f");
       $("input[name='label_format']").val(",.2f");
+    };
+    
+    var nestedData = d3.nest()
+      .key(function(d)
+      {
+        return d[xIndicator];
+      })
+      .entries(data);
+    
+    var groupedData = [];
+    var keyObj = {};
+    for(var i = 0; i < nestedData.length; i++){
+      var keyEntry = nestedData[i];
+      var obj = {};
+      var total = 0;
+      obj[xIndicator] = keyEntry.key;
+      for(var j = 0; j < keyEntry.values.length; j++){
+        var keyValue = keyEntry.values[j];
+        obj[keyValue[groupBy]] = parseFloat(keyValue[yIndicator])/divisor;
+        keyObj[keyValue[groupBy]] = true;
+        if (!isNaN(parseFloat(keyValue[yIndicator]))) {
+            total+= parseFloat(keyValue[yIndicator])/divisor;
+        };
+      };
+      obj.total = total;
+      groupedData.push(obj);
+    };
+    var keys = Object.keys(keyObj);
+    for(var i = 0; i < groupedData.length; i++){
+      for(key in keyObj){
+        if (groupedData[i][key] === undefined) {
+            groupedData[i][key] = 0;
+        };
+      };
     };
     
     var title = $("input[name='title']").val();
@@ -53,13 +89,13 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
     if (sort.length>0) {
         var sortType = sort.val();
         if (sortType=="xasc") {
-            data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
+            groupedData.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
         }else if (sortType=="xdes") {
-            data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
+            groupedData.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
         }else if (sortType=="yasc") {
-            data.sort(function(a,b) {return parseFloat(a[yIndicator])-parseFloat(b[yIndicator]);})
+            groupedData.sort(function(a,b) {return parseFloat(a.total)-parseFloat(b.total);})
         }else if (sortType=="ydes") {
-            data.sort(function(a,b) {return parseFloat(b[yIndicator])-parseFloat(a[yIndicator]);})
+            groupedData.sort(function(a,b) {return parseFloat(b.total)-parseFloat(a.total);})
         };
     };
     
@@ -82,13 +118,13 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
     .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
     
     var x = d3.scaleBand().rangeRound([0, width]);
-    var xCategories = data.map(function(d){return d[xIndicator]});
+    var xCategories = groupedData.map(function(d){return d[xIndicator]});
     x.domain(xCategories);
     
     var y = d3.scaleLinear().rangeRound([height, 0]);
     var ymaxauto = $("input:checked[name='y_maximum']").val();
     if (ymaxauto=="auto") {
-      var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
+      var ymax = d3.max(groupedData, function(d) {return Number(d.total); });
     }else{
       var ymax = parseFloat($("input[name='y_maximum_value']").val());
     };
@@ -112,6 +148,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       .text("Frequency");
     
     function update() {
+      d3.selectAll('.legend').remove();
       var svgWidth = parseInt($("input[name='width']").val());
       var svgHeight = parseInt($("input[name='height']").val());
       var pTop = parseInt($("input[name='padding_top']").val());
@@ -119,7 +156,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       var pLeft = parseInt($("input[name='padding_left']").val());
       var pBottom = parseInt($("input[name='padding_bottom']").val());
       var xRotation = parseInt($("input[name='x_text_rotation']").val());
-      var selectedColour=$("input[name='colour']").val()==""?defaultColour:$("input[name='colour']").val();
+      var selectedColours=$("input[name='colour']").val()==""?[defaultColour]:$("input[name='colour']").val().split(",");
       var xIndicator = $("select[name='x_indicator']").val();
       var yIndicator = $("select[name='y_indicator']").val();
       var sort = $("input:checked[name='sort']");
@@ -127,12 +164,51 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       var labelsOnChart = $("input:checked[name='labels_on_chart']").length==1;
       var labelFontSize = parseInt($("input[name='label_font_size']").val());
       var format_entry = $("input[name='label_format']").val();
+      var divisor = parseFloat($("input[name='unit_divisor']").val());
       try{
         var format = d3.format(format_entry); 
       }catch(err){
         var format = d3.format(",.2f");
         $("input[name='label_format']").val(",.2f");
       };
+      
+      var groupBy = $("select[name='group_by']").val();
+      
+      var nestedData = d3.nest()
+        .key(function(d)
+        {
+          return d[xIndicator];
+        })
+        .entries(data);
+      
+      var groupedData = [];
+      var keyObj = {};
+      for(var i = 0; i < nestedData.length; i++){
+        var keyEntry = nestedData[i];
+        var obj = {};
+        var total = 0;
+        obj[xIndicator] = keyEntry.key;
+        for(var j = 0; j < keyEntry.values.length; j++){
+          var keyValue = keyEntry.values[j];
+          obj[keyValue[groupBy]] = parseFloat(keyValue[yIndicator])/divisor;
+          keyObj[keyValue[groupBy]] = true;
+          if (!isNaN(parseFloat(keyValue[yIndicator]))) {
+              total+= parseFloat(keyValue[yIndicator])/divisor;
+          };
+        };
+        obj.total = total;
+        groupedData.push(obj);
+      };
+      var keys = Object.keys(keyObj);
+      for(var i = 0; i < groupedData.length; i++){
+        for(key in keyObj){
+          if (groupedData[i][key] === undefined) {
+              groupedData[i][key] = 0;
+          };
+        };
+      };
+      
+      var c = d3.scaleOrdinal().domain(keys).range(selectedColours);
       
       $('h1#visTitle').text(title);
       
@@ -148,13 +224,13 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
         if (sort.length>0) {
             var sortType = sort.val();
             if (sortType=="xasc") {
-                data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
+                groupedData.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
             }else if (sortType=="xdes") {
-                data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
+                groupedData.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
             }else if (sortType=="yasc") {
-                data.sort(function(a,b) {return parseFloat(a[yIndicator])-parseFloat(b[yIndicator]);})
+                groupedData.sort(function(a,b) {return parseFloat(a.total)-parseFloat(b.total);})
             }else if (sortType=="ydes") {
-                data.sort(function(a,b) {return parseFloat(b[yIndicator])-parseFloat(a[yIndicator]);})
+                groupedData.sort(function(a,b) {return parseFloat(b.total)-parseFloat(a.total);})
             };
         };
         
@@ -177,13 +253,13 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
         .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
         
         var x = d3.scaleBand().rangeRound([0, width]);
-        var xCategories = data.map(function(d){return d[xIndicator]});
+        var xCategories = groupedData.map(function(d){return d[xIndicator]});
         x.domain(xCategories);
           
         var y = d3.scaleLinear().rangeRound([height, 0]);
         var ymaxauto = $("input:checked[name='y_maximum']").val();
         if (ymaxauto=="auto") {
-          var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
+          var ymax = d3.max(groupedData, function(d) {return Number(d.total); });
           $("input[name='y_maximum_value']").val(ymax);
         }else{
           var ymax = parseFloat($("input[name='y_maximum_value']").val());
@@ -197,46 +273,56 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
           .attr("transform", "rotate("+xRotation+")")
           .style("text-anchor", "start");
         
-        var bars = g.selectAll(".bar").data(data)
+        var stackData = d3.stack().keys(keys)(groupedData);
+        
+        var groups = g.selectAll(".group").data(stackData)
+          .attr("class","group")
+          .attr("fill",function(d){return c(d.key)});
+          
+        groups.enter().append("g")
+          .attr("class","group")
+          .attr("fill",function(d){return c(d.key)});
+          
+        groups.exit().remove();
+          
+        var bars = groups.selectAll(".bar").data(function(d){return d;})
           .attr("class", "bar")
-          .style("fill",selectedColour)
           .attr("onmouseout","$('#tooltip').hide()")
-          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
-          .attr("y", function(d) { return y(d[yIndicator]); })
+          .attr("x", function(d) { return x(d.data[xIndicator]) + 2; })
+          .attr("y", function(d) { return y(d[1]); })
           .attr("width", (width/xCategories.length)-1)
-          .attr("height", function(d) { return height - y(d[yIndicator]); })
-          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
+          .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[1] - d[0])+"')"});
           
           bars.enter().append("rect")
           .attr("class", "bar")
-          .style("fill",selectedColour)
           .attr("onmouseout","$('#tooltip').hide()")
-          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
-          .attr("y", function(d) { return y(d[yIndicator]); })
+          .attr("x", function(d) { return x(d.data[xIndicator]) + 2; })
+          .attr("y", function(d) { return y(d[1]); })
           .attr("width", (width/xCategories.length)-1)
-          .attr("height", function(d) { return height - y(d[yIndicator]); })
-          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
+          .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[1] - d[0])+"')"});
           
         bars.exit().remove()
         
-        var labels = g.selectAll(".label").data(data)
+        var labels = groups.selectAll(".label").data(function(d){return d;})
           .attr("class","label")
-          .style("fill",contrast(selectedColour))
+          .style("fill",function(d,i,j){return contrast(d3.select(j[i].parentNode).attr("fill"))})
           .attr("text-anchor", "middle")
           .style("font-size",labelFontSize)
-          .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
-          .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
-          .text(function(d){return format(d[yIndicator])});
+          .attr("x", function(d) { return x(d.data[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
+          .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2; })
+          .text(function(d){return format(d[1] - d[0])});
           
           if (labelsOnChart) {
             labels.enter().append("text")
             .attr("class","label")
-            .style("fill",contrast(selectedColour))
+            .style("fill",function(d,i,j){return contrast(d3.select(j[i].parentNode).attr("fill"))})
             .attr("text-anchor", "middle")
             .style("font-size",labelFontSize)
-            .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
-            .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
-            .text(function(d){return format(d[yIndicator])});
+            .attr("x", function(d) { return x(d.data[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
+            .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2; })
+            .text(function(d){return format(d[1] - d[0])});
             
             labels.exit().remove();
           }else{
@@ -244,9 +330,31 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
           };
           
         $('.bar').on("mousemove",tip)
+        
+        var legend = g.append("g").attr("class","legend")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll(".group")
+            .data(keys.slice().reverse())
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      
+        legend.append("rect")
+            .attr("x", width - 19)
+            .attr("width", 19)
+            .attr("height", 19)
+            .attr("fill", c);
+      
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .text(function(d) { return d; });
+            
     };
     
-    update() 
+    update()
+    update()
     
     $('select').change(function(){update()});
     $('input').change(function(){update()});

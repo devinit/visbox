@@ -9,11 +9,11 @@
     <h1>Visualisations</h1>
     <table>
         <tr>
-            <th>View</th><th>Dataset</th><th>Chart type</th><th>Creator</th><th>Created</th>
+            <th>Visualisation</th><th>Dataset</th><th>Chart type</th><th>Creator</th><th>Created</th>
         </tr>
         {% for vis in visualisations %}
         <tr>
-            <td><a href="{{vis.get_absolute_url}}">Click here</a></td>
+            <td><a href="{{vis.get_absolute_url}}">{{vis.title}}</a></td>
             <td><a href="{{vis.dataset.get_absolute_url}}">{{vis.dataset.name}}</a></td>
             <td>{{vis.chart_type}}</td>
             <td>{{vis.creator}}</td>

@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-    {% block title %} Bar chart {% endblock %}
+    {% block title %} Pie chart {% endblock %}
     {% block head %}
     <style>
     #vis{
@@ -29,32 +29,32 @@
                 padding:5px;
                 display:none;
             }
+            
+    button {display:block;}
     
     </style>
     {% endblock %}    
     {% block content %}
     <div style="float:left;width:20%;overflow-y:scroll;height:100%;">
-      <form id="visform" method="post" action="{% url 'core.views.editVis' visualisation.pk %}">
-        <input type="hidden" name="chart_type" value="bar">
-        <input type="hidden" name="datasetPK" value="{{dataset.pk}}">
+      <form id="visform" method="post" action="{% url 'core.views.createVis' 'pie' dataset.pk %}">
         {% csrf_token %}
       <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Customize and style</a>
-      <div style="" class="toggle">
+      <div style="display:none;" class="toggle">
       {{form.as_p}}
       </div>
-      <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>
+      <button type="submit" onclick="$('div.toggle').slideDown()">Save chart and configuration</button>
       </form>
     </div>
     <div style="float:left;width:80%">
-      {% include "core/bar/vis.html" %}    
+      {% include "core/pie/vis.html" %}    
     </div>
-    <script>
-    $('#visform').on('keyup keypress', function(e) {
-      var keyCode = e.keyCode || e.which;
-      if (keyCode === 13) { 
-        e.preventDefault();
-        return false;
-      }
-    });
-    </script>
+<script>
+$('#visform').on('keyup keypress', function(e) {
+  var keyCode = e.keyCode || e.which;
+  if (keyCode === 13) { 
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
     {% endblock %}

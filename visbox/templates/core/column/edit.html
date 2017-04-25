@@ -33,7 +33,7 @@
     </style>
     {% endblock %}    
     {% block content %}
-    <div style="float:left;width:20%;overflow-y:scroll;">
+    <div style="float:left;width:20%;overflow-y:scroll;height:100%;">
       <form id="visform" method="post" action="{% url 'core.views.editVis' visualisation.pk %}">
         <input type="hidden" name="chart_type" value="column">
         <input type="hidden" name="datasetPK" value="{{dataset.pk}}">
@@ -48,4 +48,13 @@
     <div style="float:left;width:80%">
       {% include "core/column/vis.html" %}    
     </div>
+    <script>
+    $('#visform').on('keyup keypress', function(e) {
+      var keyCode = e.keyCode || e.which;
+      if (keyCode === 13) { 
+        e.preventDefault();
+        return false;
+      }
+    });
+    </script>
     {% endblock %}

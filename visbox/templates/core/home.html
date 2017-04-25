@@ -5,6 +5,10 @@
     {% endblock %}    
     {% block content %}
     <div id="content" style="width:100%">
-    <p> Welcome to DI Vis-box!</p>
+    <p> Welcome to DI Visbox!</p>
+    {% if not user.is_authenticated %}<p>Please log in or sign up to begin.</p>
+    {% else %}
+    <p>Click on "Start visualising" to start visualising!</p>
+    {% endif %}
     </div>
     {% endblock %}

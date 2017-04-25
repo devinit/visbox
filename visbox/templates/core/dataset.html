@@ -18,13 +18,19 @@
     </div>
     <div style="float:left;width:80%">
         Select a visualisation here.
-        <div style="width:710px;">
+        <div style="width:100%;float:left;">
         <h3>Visualisations</h3>
             <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Column"></a></div>
             <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "bar" dataset.pk %}"><img src="http://placehold.it/350x150?text=Bar"></a></div>
             <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "stacked-column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Stacked column"></a></div>
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "donut" dataset.pk %}"><img src="http://placehold.it/350x150?text=Donut"></a></div>
             <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "pie" dataset.pk %}"><img src="http://placehold.it/350x150?text=Pie"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "table" dataset.pk %}"><img src="http://placehold.it/350x150?text=Table"></a></div>
+        </div>
+        <div style="width:100%;float:left;">
+        <h3>Templates</h3>
+        {% for template in templates%}
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis'  template.chart_type dataset.pk %}?copy={{template.pk}}"><img src="http://placehold.it/350x150?text={{template.title}} ({{template.chart_type}})"></a></div>
+        {% endfor %}
         </div>
     </div>
     <div style="float:left;width:100%">

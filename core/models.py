@@ -22,6 +22,7 @@ class Dataset(models.Model):
         return reverse('core.views.dataset',args=[self.pk])
     
 class Visualisation(models.Model):
+    title = models.CharField(null=True,blank=True,max_length=255)
     chart_type = models.CharField(max_length=255)
     dataset = models.ForeignKey(Dataset)
     creator = models.ForeignKey(User, editable=False)
@@ -36,6 +37,7 @@ class Visualisation(models.Model):
     y_indicator = models.CharField(null=True,blank=True,max_length=255)
     z_indicator = models.CharField(null=True,blank=True,max_length=255)
     c_indicator = models.CharField(null=True,blank=True,max_length=255)
+    group_by = models.CharField(null=True,blank=True,max_length=255)
     sort = models.CharField(null=True,blank=True,max_length=255)
     y_maximum = models.CharField(null=True,blank=True,max_length=255,default="auto")
     y_maximum_value = models.DecimalField(null=True,blank=True,max_digits=99,decimal_places=5)
@@ -45,10 +47,24 @@ class Visualisation(models.Model):
     x_label = models.CharField(null=True,blank=True,max_length=255)
     y_label = models.CharField(null=True,blank=True,max_length=255)
     x_text_rotation = models.IntegerField(default=45)
+    save_as_template = models.BooleanField(default=False)
+    labels_on_chart = models.BooleanField(default=False)
+    label_font_size = models.IntegerField(default=10)
+    label_format = models.CharField(default=",.2f",max_length=255)
+    unit_divisor = models.IntegerField(default=1)
+    
+    def __unicode__(self):
+        return u'%s' % self.title
     
     class Meta:
         ordering = ['-created']
         
     def get_absolute_url(self):
         return reverse('core.views.viewVis',args=[self.pk])
+    
+    def save(self, *args, **kwargs):
+        super(Visualisation, self).save(*args, **kwargs)
+        if self.title is None or self.title == "":
+            self.title = self.chart_type + " " + str(self.pk)
+        super(Visualisation, self).save(*args, **kwargs)
 
