@@ -16,7 +16,15 @@ class SignUpForm(UserCreationForm):
 class UploadForm(ModelForm):
     class Meta:
         model = Dataset
-        fields = ['name','data']
+        fields = ['name','data','sep']
+        SEP_CHOICES = [
+            ("t","Tab (pasted from Excel)"),
+            (",","Comma"),
+            ("|","Pipe"),
+        ]
+        widgets = {
+            'sep':forms.RadioSelect(choices=SEP_CHOICES)
+        }
         
 class VisForm(ModelForm):
     class Meta:

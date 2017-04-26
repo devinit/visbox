@@ -10,7 +10,7 @@ class Dataset(models.Model):
     creator = models.ForeignKey(User, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     data = models.TextField()
-    sep = models.CharField(max_length=1, null=True, blank=True)
+    sep = models.CharField(max_length=1,default="\t")
     
     class Meta:
         ordering = ['-created']

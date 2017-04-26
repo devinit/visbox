@@ -38,18 +38,15 @@ def start(request):
         form = UploadForm(request.POST)
         if form.is_valid():
             dataset = form.save(commit=False)
+            if dataset.sep == "t":
+                dataset.sep = "\t"
             dataset.creator = User.objects.get(username=user)
-            dataset.sep = "\t"
             dataset.save()
-    form = UploadForm()
+            form = UploadForm()
+    else:
+        form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
     staff_datasets = Dataset.objects.filter(creator__in=staff)
-    for dataset in datasets:
-        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-        dataset.table = df.to_html()
-    for dataset in staff_datasets:
-        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-        dataset.table = df.to_html()
     return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"form":form})
 
 @login_required

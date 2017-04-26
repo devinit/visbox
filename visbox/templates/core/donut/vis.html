@@ -19,6 +19,26 @@ polyline{
 </svg>
 <div id="tooltip"></div>
 <script>
+	
+function columnType(arr) {
+  var parsedArray = arr.map(function(d){return isNaN(parseFloat(d))});
+  var arrAvg = d3.mean(parsedArray);
+  if (arrAvg<=.5) {
+    return("number");
+  }else{
+    return("string");
+  };
+};
+
+function NaNSafeSort(x,y){
+  var a = parseFloat(x),
+  b = parseFloat(y);
+   if(!isFinite(a-b))
+      return !isFinite(a) ? -1 : 1;
+   else
+      return a-b;
+};
+	
 var duration = 1000;
 function contrast(hex){
   var color = d3.color(hex);
@@ -78,17 +98,35 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     
     var data = csvDat.map(function(d) { return {label: d[xIndicator], value: d[yIndicator]}; });
     
+    var xType = columnType(data.map(function(d){return d.label}));
+    var yType = columnType(data.map(function(d){return d.value}));               
     var sort = $("input:checked[name='sort']");
     if (sort.length>0) {
         var sortType = sort.val();
         if (sortType=="xasc") {
+          if (xType=="string") {
             data.sort(function(a,b) {return d3.ascending(a.label,b.label);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a.label,b.label);})
+          };
         }else if (sortType=="xdes") {
+          if (xType=="string") {
             data.sort(function(a,b) {return d3.descending(a.label,b.label);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.label,a.label);})
+          };
         }else if (sortType=="yasc") {
-            data.sort(function(a,b) {return parseFloat(a.value)-parseFloat(b.value);})
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.ascending(a.value,b.value);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a.value,b.value);})
+          };
         }else if (sortType=="ydes") {
-            data.sort(function(a,b) {return parseFloat(b.value)-parseFloat(a.value);})
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.descending(a.value,b.value);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.value,a.value);})
+          };
         };
     };
     
@@ -161,19 +199,37 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       
       var data = csvDat.map(function(d) { return {label: d[xIndicator], value: d[yIndicator]}; });
       
-      var sort = $("input:checked[name='sort']");
-      if (sort.length>0) {
-          var sortType = sort.val();
-          if (sortType=="xasc") {
-              data.sort(function(a,b) {return d3.ascending(a.label,b.label);})
-          }else if (sortType=="xdes") {
-              data.sort(function(a,b) {return d3.descending(a.label,b.label);})
-          }else if (sortType=="yasc") {
-              data.sort(function(a,b) {return parseFloat(a.value)-parseFloat(b.value);})
-          }else if (sortType=="ydes") {
-              data.sort(function(a,b) {return parseFloat(b.value)-parseFloat(a.value);})
-          };
-      };
+      var xType = columnType(data.map(function(d){return d.label}));
+		var yType = columnType(data.map(function(d){return d.value}));               
+		var sort = $("input:checked[name='sort']");
+		if (sort.length>0) {
+			var sortType = sort.val();
+			if (sortType=="xasc") {
+			  if (xType=="string") {
+				data.sort(function(a,b) {return d3.ascending(a.label,b.label);})
+			  }else{
+				data.sort(function(a,b){return NaNSafeSort(a.label,b.label);})
+			  };
+			}else if (sortType=="xdes") {
+			  if (xType=="string") {
+				data.sort(function(a,b) {return d3.descending(a.label,b.label);})
+			  }else{
+				data.sort(function(a,b){return NaNSafeSort(b.label,a.label);})
+			  };
+			}else if (sortType=="yasc") {
+			  if (yType=="string") {
+				data.sort(function(a,b) {return d3.ascending(a.value,b.value);})
+			  }else{
+				data.sort(function(a,b){return NaNSafeSort(a.value,b.value);})
+			  };
+			}else if (sortType=="ydes") {
+			  if (yType=="string") {
+				data.sort(function(a,b) {return d3.descending(a.value,b.value);})
+			  }else{
+				data.sort(function(a,b){return NaNSafeSort(b.value,a.value);})
+			  };
+			};
+		};
       
       var sum = d3.sum(data,function(d){return d.value});
       var color = d3.scaleOrdinal().domain(xCategories).range(selectedColours);

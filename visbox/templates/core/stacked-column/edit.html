@@ -39,7 +39,7 @@
         <input type="hidden" name="datasetPK" value="{{dataset.pk}}">
         {% csrf_token %}
       <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Customize and style</a>
-      <div style="" class="toggle">
+      <div class="toggle">
       {{form.as_p}}
       </div>
       <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>

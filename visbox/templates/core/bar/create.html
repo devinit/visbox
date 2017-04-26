@@ -39,7 +39,7 @@
       <form id="visform" method="post" action="{% url 'core.views.createVis' 'bar' dataset.pk %}">
         {% csrf_token %}
       <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Customize and style</a>
-      <div style="display:none;" class="toggle">
+      <div class="toggle">
       {{form.as_p}}
       </div>
       <button type="submit" onclick="$('div.toggle').slideDown()">Save chart and configuration</button>

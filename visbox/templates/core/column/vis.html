@@ -5,6 +5,46 @@
 </svg>
 <div id="tooltip"></div>
 <script>
+//function columnType(arr) {
+//    var typeArr = arr.map(function(d){return $.type(d)});
+//    if(typeArr.length == 0)
+//        return null;
+//    var modeMap = {};
+//    var maxEl = typeArr[0], maxCount = 1;
+//    for(var i = 0; i < typeArr.length; i++)
+//    {
+//        var el = typeArr[i];
+//        if(modeMap[el] == null)
+//            modeMap[el] = 1;
+//        else
+//            modeMap[el]++;  
+//        if(modeMap[el] > maxCount)
+//        {
+//            maxEl = el;
+//            maxCount = modeMap[el];
+//        }
+//    }
+//    return maxEl;
+//};
+
+function columnType(arr) {
+  var parsedArray = arr.map(function(d){return isNaN(parseFloat(d))});
+  var arrAvg = d3.mean(parsedArray);
+  if (arrAvg<=.5) {
+    return("number");
+  }else{
+    return("string");
+  };
+};
+
+function NaNSafeSort(x,y){
+  var a = parseFloat(x),
+  b = parseFloat(y);
+   if(!isFinite(a-b))
+      return !isFinite(a) ? -1 : 1;
+   else
+      return a-b;
+};  
 function contrast(hex){
   var color = d3.color(hex);
   var lum = 0.2126*color.r + 0.7152*color.g + 0.0722*color.b;
@@ -49,17 +89,35 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
     var title = $("input[name='title']").val();
     $('h1#visTitle').text(title);
     
+    var xType = columnType(data.map(function(d){return d[xIndicator]}));
+    var yType = columnType(data.map(function(d){return d[yIndicator]}));               
     var sort = $("input:checked[name='sort']");
     if (sort.length>0) {
         var sortType = sort.val();
         if (sortType=="xasc") {
+          if (xType=="string") {
             data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a[xIndicator],b[xIndicator]);})
+          };
         }else if (sortType=="xdes") {
+          if (xType=="string") {
             data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b[xIndicator],a[xIndicator]);})
+          };
         }else if (sortType=="yasc") {
-            data.sort(function(a,b) {return parseFloat(a[yIndicator])-parseFloat(b[yIndicator]);})
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.ascending(a[yIndicator],b[yIndicator]);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a[yIndicator],b[yIndicator]);})
+          };
         }else if (sortType=="ydes") {
-            data.sort(function(a,b) {return parseFloat(b[yIndicator])-parseFloat(a[yIndicator]);})
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.descending(a[yIndicator],b[yIndicator]);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b[yIndicator],a[yIndicator]);})
+          };
         };
     };
     
@@ -145,81 +203,110 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       
       g.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
-        if (sort.length>0) {
-            var sortType = sort.val();
-            if (sortType=="xasc") {
-                data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
-            }else if (sortType=="xdes") {
-                data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
-            }else if (sortType=="yasc") {
-                data.sort(function(a,b) {return parseFloat(a[yIndicator])-parseFloat(b[yIndicator]);})
-            }else if (sortType=="ydes") {
-                data.sort(function(a,b) {return parseFloat(b[yIndicator])-parseFloat(a[yIndicator]);})
+      var xType = columnType(data.map(function(d){return d[xIndicator]}));
+      var yType = columnType(data.map(function(d){return d[yIndicator]}));               
+      var sort = $("input:checked[name='sort']");
+      if (sort.length>0) {
+          var sortType = sort.val();
+          if (sortType=="xasc") {
+            if (xType=="string") {
+              data.sort(function(a,b) {return d3.ascending(a[xIndicator],b[xIndicator]);})
+            }else{
+              data.sort(function(a,b){return NaNSafeSort(a[xIndicator],b[xIndicator]);})
             };
-        };
+          }else if (sortType=="xdes") {
+            if (xType=="string") {
+              data.sort(function(a,b) {return d3.descending(a[xIndicator],b[xIndicator]);})
+            }else{
+              data.sort(function(a,b){return NaNSafeSort(b[xIndicator],a[xIndicator]);})
+            };
+          }else if (sortType=="yasc") {
+            if (yType=="string") {
+              data.sort(function(a,b) {return d3.ascending(a[yIndicator],b[yIndicator]);})
+            }else{
+              data.sort(function(a,b){return NaNSafeSort(a[yIndicator],b[yIndicator]);})
+            };
+          }else if (sortType=="ydes") {
+            if (yType=="string") {
+              data.sort(function(a,b) {return d3.descending(a[yIndicator],b[yIndicator]);})
+            }else{
+              data.sort(function(a,b){return NaNSafeSort(b[yIndicator],a[yIndicator]);})
+            };
+          };
+      };
         
-        if ($("input[name='x_label']").val()=="") {
-            $('#xaxislabel').text(xIndicator)
-        }else{
-            $('#xaxislabel').text($("input[name='x_label']").val())
-        };
-        $('#xaxislabel')
-          .attr("x",(svgWidth-$('#xaxislabel').width()+margin.left-margin.right)/2)
-          .attr("y",svgHeight-$('#xaxislabel').height());
-          
-        if ($("input[name='y_label']").val()=="") {
-            $('#yaxislabel').text(yIndicator)
-        }else{
-            $('#yaxislabel').text($("input[name='y_label']").val())
-        };
-        $('#yaxislabel')
-        .attr("y",$('#yaxislabel').width())
-        .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
+      if ($("input[name='x_label']").val()=="") {
+          $('#xaxislabel').text(xIndicator)
+      }else{
+          $('#xaxislabel').text($("input[name='x_label']").val())
+      };
+      $('#xaxislabel')
+        .attr("x",(svgWidth-$('#xaxislabel').width()+margin.left-margin.right)/2)
+        .attr("y",svgHeight-$('#xaxislabel').height());
         
-        var x = d3.scaleBand().rangeRound([0, width]);
-        var xCategories = data.map(function(d){return d[xIndicator]});
-        x.domain(xCategories);
-          
-        var y = d3.scaleLinear().rangeRound([height, 0]);
-        var ymaxauto = $("input:checked[name='y_maximum']").val();
-        if (ymaxauto=="auto") {
-          var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
-          $("input[name='y_maximum_value']").val(ymax);
-        }else{
-          var ymax = parseFloat($("input[name='y_maximum_value']").val());
-        };
-        y.domain([0, ymax]);
-    
-        yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
-        xaxis.transition().call(d3.axisBottom(x))
-        xaxis.attr("transform", "translate(0," + height + ")")
-        xaxis.selectAll("text")
-          .attr("transform", "rotate("+xRotation+")")
-          .style("text-anchor", "start");
+      if ($("input[name='y_label']").val()=="") {
+          $('#yaxislabel').text(yIndicator)
+      }else{
+          $('#yaxislabel').text($("input[name='y_label']").val())
+      };
+      $('#yaxislabel')
+      .attr("y",$('#yaxislabel').width())
+      .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
+      
+      var x = d3.scaleBand().rangeRound([0, width]);
+      var xCategories = data.map(function(d){return d[xIndicator]});
+      x.domain(xCategories);
         
-        var bars = g.selectAll(".bar").data(data)
-          .attr("class", "bar")
-          .style("fill",selectedColour)
-          .attr("onmouseout","$('#tooltip').hide()")
-          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
-          .attr("y", function(d) { return y(d[yIndicator]); })
-          .attr("width", (width/xCategories.length)-1)
-          .attr("height", function(d) { return height - y(d[yIndicator]); })
-          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
-          
-          bars.enter().append("rect")
-          .attr("class", "bar")
-          .style("fill",selectedColour)
-          .attr("onmouseout","$('#tooltip').hide()")
-          .attr("x", function(d) { return x(d[xIndicator]) + 2; })
-          .attr("y", function(d) { return y(d[yIndicator]); })
-          .attr("width", (width/xCategories.length)-1)
-          .attr("height", function(d) { return height - y(d[yIndicator]); })
-          .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
-          
-        bars.exit().remove()
+      var y = d3.scaleLinear().rangeRound([height, 0]);
+      var ymaxauto = $("input:checked[name='y_maximum']").val();
+      if (ymaxauto=="auto") {
+        var ymax = d3.max(data, function(d) {return Number(d[yIndicator]); });
+        $("input[name='y_maximum_value']").val(ymax);
+      }else{
+        var ymax = parseFloat($("input[name='y_maximum_value']").val());
+      };
+      y.domain([0, ymax]);
+  
+      yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
+      xaxis.transition().call(d3.axisBottom(x))
+      xaxis.attr("transform", "translate(0," + height + ")")
+      xaxis.selectAll("text")
+        .attr("transform", "rotate("+xRotation+")")
+        .style("text-anchor", "start");
+      
+      var bars = g.selectAll(".bar").data(data)
+        .attr("class", "bar")
+        .style("fill",selectedColour)
+        .attr("onmouseout","$('#tooltip').hide()")
+        .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+        .attr("y", function(d) { return y(d[yIndicator]); })
+        .attr("width", (width/xCategories.length)-1)
+        .attr("height", function(d) { return height - y(d[yIndicator]); })
+        .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
         
-        var labels = g.selectAll(".label").data(data)
+        bars.enter().append("rect")
+        .attr("class", "bar")
+        .style("fill",selectedColour)
+        .attr("onmouseout","$('#tooltip').hide()")
+        .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+        .attr("y", function(d) { return y(d[yIndicator]); })
+        .attr("width", (width/xCategories.length)-1)
+        .attr("height", function(d) { return height - y(d[yIndicator]); })
+        .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
+        
+      bars.exit().remove()
+      
+      var labels = g.selectAll(".label").data(data)
+        .attr("class","label")
+        .style("fill",contrast(selectedColour))
+        .attr("text-anchor", "middle")
+        .style("font-size",labelFontSize)
+        .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
+        .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
+        .text(function(d){return format(d[yIndicator])});
+        
+        if (labelsOnChart) {
+          labels.enter().append("text")
           .attr("class","label")
           .style("fill",contrast(selectedColour))
           .attr("text-anchor", "middle")
@@ -228,22 +315,12 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
           .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
           .text(function(d){return format(d[yIndicator])});
           
-          if (labelsOnChart) {
-            labels.enter().append("text")
-            .attr("class","label")
-            .style("fill",contrast(selectedColour))
-            .attr("text-anchor", "middle")
-            .style("font-size",labelFontSize)
-            .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
-            .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
-            .text(function(d){return format(d[yIndicator])});
-            
-            labels.exit().remove();
-          }else{
-            labels.remove();
-          };
-          
-        $('.bar').on("mousemove",tip)
+          labels.exit().remove();
+        }else{
+          labels.remove();
+        };
+        
+      $('.bar').on("mousemove",tip)
     };
     
     update() 
