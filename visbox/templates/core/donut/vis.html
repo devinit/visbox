@@ -127,6 +127,26 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           }else{
             data.sort(function(a,b){return NaNSafeSort(b.value,a.value);})
           };
+        }else if (sortType=="avoid") {
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.descending(a.value,b.value);})
+			var fullIndex = data.length,
+			halfIndex = Math.round(fullIndex/2),
+			half = data.splice(halfIndex,fullIndex);
+			half.reverse();
+			for(var i = 0; i < half.length; i++){
+				data.splice((2*i)+1, 0, half[i]);
+			};
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.value,a.value);});
+			var fullIndex = data.length,
+			halfIndex = Math.round(fullIndex/2),
+			half = data.splice(halfIndex,fullIndex);
+			half.reverse();
+			for(var i = 0; i < half.length; i++){
+				data.splice((2*i)+1, 0, half[i]);
+			};
+          };
         };
     };
     
@@ -143,8 +163,8 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
 	.innerRadius(radius * 0.4);
 
     var outerArc = d3.arc()
-        .innerRadius(radius * 0.9)
-        .outerRadius(radius * 0.9);
+        .innerRadius(radius * .9)
+        .outerRadius(radius * .9);
     
     var key = function(d){ return d.data.label; };
     var color = d3.scaleOrdinal().domain(xCategories).range(selectedColours);
@@ -200,36 +220,56 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       var data = csvDat.map(function(d) { return {label: d[xIndicator], value: d[yIndicator]}; });
       
       var xType = columnType(data.map(function(d){return d.label}));
-		var yType = columnType(data.map(function(d){return d.value}));               
-		var sort = $("input:checked[name='sort']");
-		if (sort.length>0) {
-			var sortType = sort.val();
-			if (sortType=="xasc") {
-			  if (xType=="string") {
-				data.sort(function(a,b) {return d3.ascending(a.label,b.label);})
-			  }else{
-				data.sort(function(a,b){return NaNSafeSort(a.label,b.label);})
-			  };
-			}else if (sortType=="xdes") {
-			  if (xType=="string") {
-				data.sort(function(a,b) {return d3.descending(a.label,b.label);})
-			  }else{
-				data.sort(function(a,b){return NaNSafeSort(b.label,a.label);})
-			  };
-			}else if (sortType=="yasc") {
-			  if (yType=="string") {
-				data.sort(function(a,b) {return d3.ascending(a.value,b.value);})
-			  }else{
-				data.sort(function(a,b){return NaNSafeSort(a.value,b.value);})
-			  };
-			}else if (sortType=="ydes") {
-			  if (yType=="string") {
-				data.sort(function(a,b) {return d3.descending(a.value,b.value);})
-			  }else{
-				data.sort(function(a,b){return NaNSafeSort(b.value,a.value);})
-			  };
+    var yType = columnType(data.map(function(d){return d.value}));               
+    var sort = $("input:checked[name='sort']");
+    if (sort.length>0) {
+        var sortType = sort.val();
+        if (sortType=="xasc") {
+          if (xType=="string") {
+            data.sort(function(a,b) {return d3.ascending(a.label,b.label);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a.label,b.label);})
+          };
+        }else if (sortType=="xdes") {
+          if (xType=="string") {
+            data.sort(function(a,b) {return d3.descending(a.label,b.label);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.label,a.label);})
+          };
+        }else if (sortType=="yasc") {
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.ascending(a.value,b.value);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(a.value,b.value);})
+          };
+        }else if (sortType=="ydes") {
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.descending(a.value,b.value);})
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.value,a.value);})
+          };
+        }else if (sortType=="avoid") {
+          if (yType=="string") {
+            data.sort(function(a,b) {return d3.descending(a.value,b.value);})
+			var fullIndex = data.length,
+			halfIndex = Math.round(fullIndex/2),
+			half = data.splice(halfIndex,fullIndex);
+			half.reverse();
+			for(var i = 0; i < half.length; i++){
+				data.splice((2*i)+1, 0, half[i]);
 			};
-		};
+          }else{
+            data.sort(function(a,b){return NaNSafeSort(b.value,a.value);});
+			var fullIndex = data.length,
+			halfIndex = Math.round(fullIndex/2),
+			half = data.splice(halfIndex,fullIndex);
+			half.reverse();
+			for(var i = 0; i < half.length; i++){
+				data.splice((2*i)+1, 0, half[i]);
+			};
+          };
+        };
+    };
       
       var sum = d3.sum(data,function(d){return d.value});
       var color = d3.scaleOrdinal().domain(xCategories).range(selectedColours);
@@ -360,6 +400,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
                   _this._current = d2;
                   var pos = outerArc.centroid(d2);
                   pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+				  console.log(pos)
                   return [arc.centroid(d2), outerArc.centroid(d2), pos];
               };			
           });
