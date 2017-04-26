@@ -28,9 +28,20 @@
         </div>
         <div style="width:100%;float:left;">
         <h3>Templates</h3>
-        {% for template in templates%}
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis'  template.chart_type dataset.pk %}?copy={{template.pk}}"><img src="http://placehold.it/350x150?text={{template.title}} ({{template.chart_type}})"></a></div>
-        {% endfor %}
+        <table>
+            <tr>
+                <th>Template</th><th>Original dataset</th><th>Chart type</th><th>Creator</th><th>Created</th>
+            </tr>
+            {% for vis in templates%}
+            <tr>
+                <td><a href="{% url 'core.views.createVis'  vis.chart_type dataset.pk %}?copy={{vis.pk}}">{{vis.title}}</a></td>
+                <td>{{vis.dataset.name}}</td>
+                <td>{{vis.chart_type}}</td>
+                <td>{{vis.creator}}</td>
+                <td>{{vis.created}}</td>
+            </tr>
+            {% endfor %}
+        </table>
         </div>
     </div>
     <div style="float:left;width:100%">
