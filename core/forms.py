@@ -126,7 +126,7 @@ class DonutForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','sort','filter_by','filter_selection','colour','label_font_size','label_format','save_as_template')
-        SORT_CHOICES = [('avoid','Avoid text collisions'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
+        SORT_CHOICES = [('native','Native ordering'),('avoid','Avoid text collisions'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         widgets = {
             'dataset':forms.HiddenInput(),
             'sort':forms.RadioSelect(choices=SORT_CHOICES),

@@ -45,7 +45,7 @@
         </div>
     </div>
     <div style="float:left;width:100%">
-        <h2>Data preview</h2>
+        <h2>Data preview <a href = "{% url 'core.views.csv' dataset.pk %}">(download as CSV)</a></h2>
         {{dataset.table|safe}}
     </div>
     </div>
