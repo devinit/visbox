@@ -52,6 +52,8 @@ class Visualisation(models.Model):
     label_font_size = models.IntegerField(default=10)
     label_format = models.CharField(default=",.2f",max_length=255)
     unit_divisor = models.IntegerField(default=1)
+    filter_by = models.CharField(default="None",max_length=255)
+    filter_selection = models.CharField(null=True,blank=True,max_length=255)
     
     def __unicode__(self):
         return u'%s' % self.title

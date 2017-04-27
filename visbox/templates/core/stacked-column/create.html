@@ -44,6 +44,16 @@
       </div>
       <button type="submit" onclick="$('div.toggle').slideDown()">Save chart and configuration</button>
       </form>
+      <script>
+        {% load staticfiles %}   
+        crowbar = function () {
+                  var e = document.createElement('script'); e.setAttribute('src',
+                  '{% static 'core/js/svg-crowbar.js' %}'
+                  ); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e);
+
+        };
+      </script>
+      <button id="print" onclick="crowbar()">Export as vector</button>
     </div>
     <div style="float:left;width:80%">
       {% include "core/stacked-column/vis.html" %}    

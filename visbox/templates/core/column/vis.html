@@ -70,8 +70,43 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
-d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
+d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     if (error) throw error;
+    
+    var filter_by = $("select[name='filter_by']").val();
+    var selectedFilter = $("select[name='filter_selection']").val();
+    if (filter_by=="None") {
+        var data = csvDat;
+        d3.select("select[name='filter_selection']").selectAll("option").remove();
+    }else if(selectedFilter===null){
+      d3.select("select[name='filter_selection']").selectAll("option").remove();
+      var uniqueFilters = d3.map(csvDat,function(d){return d[filter_by]}).keys();
+      var filterSelection = "{{visualisation.filter_selection}}";
+      d3.select("select[name='filter_selection']").selectAll("option").data(uniqueFilters)
+        .enter()
+        .append("option")
+        .attr("value",function(d){return d})
+        .text(function(d){return d})
+        .attr("selected",function(d){return d==filterSelection?true:null;});
+        
+      var selectedFilter = $("select[name='filter_selection']").val();
+        
+      var data = csvDat.filter(function(d){return d[filter_by]==selectedFilter});
+    }else{
+      var filterSelection = $("select[name='filter_selection']").val();
+      d3.select("select[name='filter_selection']").selectAll("option").remove();
+      var uniqueFilters = d3.map(csvDat,function(d){return d[filter_by]}).keys();
+      d3.select("select[name='filter_selection']").selectAll("option").data(uniqueFilters)
+        .enter()
+        .append("option")
+        .attr("value",function(d){return d})
+        .text(function(d){return d})
+        .attr("selected",function(d){return d==filterSelection?true:null;});
+        
+      var selectedFilter = $("select[name='filter_selection']").val();
+        
+      var data = csvDat.filter(function(d){return d[filter_by]==selectedFilter});
+    };
     
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -140,7 +175,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
     .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
     
     var x = d3.scaleBand().rangeRound([0, width]);
-    var xCategories = data.map(function(d){return d[xIndicator]});
+    var xCategories = d3.map(data,function(d){return d[xIndicator]}).keys();
     x.domain(xCategories);
     
     var y = d3.scaleLinear().rangeRound([height, 0]);
@@ -170,6 +205,42 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       .text("Frequency");
     
     function update() {
+      
+      var filter_by = $("select[name='filter_by']").val();
+      var selectedFilter = $("select[name='filter_selection']").val();
+      if (filter_by=="None") {
+          var data = csvDat;
+          d3.select("select[name='filter_selection']").selectAll("option").remove();
+      }else if(selectedFilter===null){
+        d3.select("select[name='filter_selection']").selectAll("option").remove();
+        var uniqueFilters = d3.map(csvDat,function(d){return d[filter_by]}).keys();
+        var filterSelection = "{{visualisation.filter_selection}}";
+        d3.select("select[name='filter_selection']").selectAll("option").data(uniqueFilters)
+          .enter()
+          .append("option")
+          .attr("value",function(d){return d})
+          .text(function(d){return d})
+          .attr("selected",function(d){return d==filterSelection?true:null;});
+          
+        var selectedFilter = $("select[name='filter_selection']").val();
+          
+        var data = csvDat.filter(function(d){return d[filter_by]==selectedFilter});
+      }else{
+        var filterSelection = $("select[name='filter_selection']").val();
+        d3.select("select[name='filter_selection']").selectAll("option").remove();
+        var uniqueFilters = d3.map(csvDat,function(d){return d[filter_by]}).keys();
+        d3.select("select[name='filter_selection']").selectAll("option").data(uniqueFilters)
+          .enter()
+          .append("option")
+          .attr("value",function(d){return d})
+          .text(function(d){return d})
+          .attr("selected",function(d){return d==filterSelection?true:null;});
+          
+        var selectedFilter = $("select[name='filter_selection']").val();
+          
+        var data = csvDat.filter(function(d){return d[filter_by]==selectedFilter});
+      };
+    
       var svgWidth = parseInt($("input[name='width']").val());
       var svgHeight = parseInt($("input[name='height']").val());
       var pTop = parseInt($("input[name='padding_top']").val());
@@ -254,7 +325,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
       .attr("x",-1*((svgHeight+$('#yaxislabel').height()-margin.bottom+margin.top)/2))
       
       var x = d3.scaleBand().rangeRound([0, width]);
-      var xCategories = data.map(function(d){return d[xIndicator]});
+      var xCategories = d3.map(data,function(d){return d[xIndicator]}).keys();
       x.domain(xCategories);
         
       var y = d3.scaleLinear().rangeRound([height, 0]);
@@ -280,7 +351,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
         .attr("onmouseout","$('#tooltip').hide()")
         .attr("x", function(d) { return x(d[xIndicator]) + 2; })
         .attr("y", function(d) { return y(d[yIndicator]); })
-        .attr("width", (width/xCategories.length)-1)
+        .attr("width", d3.max([(width/xCategories.length)-1, 1]))
         .attr("height", function(d) { return height - y(d[yIndicator]); })
         .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
         
@@ -290,7 +361,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
         .attr("onmouseout","$('#tooltip').hide()")
         .attr("x", function(d) { return x(d[xIndicator]) + 2; })
         .attr("y", function(d) { return y(d[yIndicator]); })
-        .attr("width", (width/xCategories.length)-1)
+        .attr("width", d3.max([(width/xCategories.length)-1, 1]))
         .attr("height", function(d) { return height - y(d[yIndicator]); })
         .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
         
@@ -301,7 +372,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
         .style("fill",contrast(selectedColour))
         .attr("text-anchor", "middle")
         .style("font-size",labelFontSize)
-        .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
+        .attr("x", function(d) { return x(d[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1, 1]))/2 })
         .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
         .text(function(d){return format(d[yIndicator])});
         
@@ -311,7 +382,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, data) {
           .style("fill",contrast(selectedColour))
           .attr("text-anchor", "middle")
           .style("font-size",labelFontSize)
-          .attr("x", function(d) { return x(d[xIndicator]) + 2 + ((width/xCategories.length)-1)/2 })
+          .attr("x", function(d) { return x(d[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1, 1]))/2 })
           .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
           .text(function(d){return format(d[yIndicator])});
           
