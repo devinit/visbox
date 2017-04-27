@@ -416,16 +416,20 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         .data(
           stackData[stackData.length-1].map(function(d){return {"y":d[d.length-1],"x":d.data[xIndicator]}})
         )
+          .style("font-size",labelFontSize)
+          .attr("x", function(d) { return x(d.x) + 2 + (d3.max([(width/xCategories.length)-1,1]))/2 })
+          .attr("y", function(d) { return y(d.y) - labelFontSize/2 })
+          .text(function(d){return format(d.y)})
+          .style("opacity",function(d){return (d.y) > 0 ? 1 : 0 })
           .attr("class","groupLabel")
           .attr("fill","black")
           .attr("text-anchor", "middle");
           
           if (labelsOnChart) {
           groupLabels.enter().append("text")
-          .each(function(d,i){})
           .style("font-size",labelFontSize)
           .attr("x", function(d) { return x(d.x) + 2 + (d3.max([(width/xCategories.length)-1,1]))/2 })
-          .attr("y", function(d) { return y(d.y) - labelFontSize })
+          .attr("y", function(d) { return y(d.y) - labelFontSize/2 })
           .text(function(d){return format(d.y)})
           .style("opacity",function(d){return (d.y) > 0 ? 1 : 0 })
           .attr("class","groupLabel")
@@ -463,9 +467,14 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           .attr("text-anchor", "middle")
           .style("font-size",labelFontSize)
           .attr("x", function(d) { return x(d.data[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1,1]))/2 })
-          .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2; })
+          .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2 + labelFontSize/2;; })
           .text(function(d){return format(d[1] - d[0])})
-          .style("opacity",function(d){return (d[1] - d[0]) > 0 ? 1 : 0 });
+          .each(function(d,i) {
+              var bbox = this.getBBox();
+              var barHeight = y(d[0]) - y(d[1]);
+              d.unsquished =  barHeight > bbox.height;
+              })
+            .style("opacity",function(d){return (d[1] - d[0]) > 0 && d.unsquished ? 1 : 0 });
           
           if (labelsOnChart) {
             labels.enter().append("text")
@@ -474,7 +483,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             .attr("text-anchor", "middle")
             .style("font-size",labelFontSize)
             .attr("x", function(d) { return x(d.data[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1,1]))/2 })
-            .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2; })
+            .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2 + labelFontSize/2; })
             .text(function(d){return format(d[1] - d[0])})
             .each(function(d,i) {
               var bbox = this.getBBox();
