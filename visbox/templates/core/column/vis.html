@@ -343,7 +343,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       xaxis.attr("transform", "translate(0," + height + ")")
       xaxis.selectAll("text")
         .attr("transform", "rotate("+xRotation+")")
-        .style("text-anchor", "start");
+        .style("text-anchor", xRotation>0?"start":"middle");
       
       var bars = g.selectAll(".bar").data(data)
         .attr("class", "bar")

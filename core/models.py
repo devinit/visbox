@@ -54,6 +54,7 @@ class Visualisation(models.Model):
     unit_divisor = models.IntegerField(default=1)
     filter_by = models.CharField(default="None",max_length=255)
     filter_selection = models.CharField(null=True,blank=True,max_length=255)
+    legend_position = models.CharField(default='tr',max_length=2)
     
     def __unicode__(self):
         return u'%s' % self.title

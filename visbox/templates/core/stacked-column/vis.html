@@ -398,7 +398,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         xaxis.attr("transform", "translate(0," + height + ")")
         xaxis.selectAll("text")
           .attr("transform", "rotate("+xRotation+")")
-          .style("text-anchor", "start");
+          .style("text-anchor", xRotation>0?"start":"middle");
         
         var stackData = d3.stack().keys(keys)(groupedData);
         
@@ -499,22 +499,24 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           
         $('.bar').on("mousemove",tip)
         
+        var legend_position = $("input:checked[name='legend_position']").val();
+        
         var legend = g.append("g").attr("class","legend")
             .attr("font-size", 10)
-            .attr("text-anchor", "end")
+            .attr("text-anchor", legend_position=="tr"?"end":"start")
             .selectAll(".group")
             .data(keys.slice().reverse())
             .enter().append("g")
             .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
       
         legend.append("rect")
-            .attr("x", width - 19)
+            .attr("x", legend_position=="tr"?width - 19:19)
             .attr("width", 19)
             .attr("height", 19)
             .attr("fill", c);
       
         legend.append("text")
-            .attr("x", width - 24)
+            .attr("x", legend_position=="tr"?width - 24:48)
             .attr("y", 9.5)
             .attr("dy", "0.32em")
             .text(function(d) { return d; });
