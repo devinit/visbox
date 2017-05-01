@@ -6,12 +6,12 @@ path.slice{
 }
 
 polyline{
-	opacity: .3;
-	stroke: black;
+	opacity: 1;
+	stroke: #a9a6aa;
 	stroke-width: 2px;
 	fill: none;
 }
-
+#visTitle {color:#e84439;}
 
 </style>
 {% endblock %}
@@ -636,7 +636,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           })
 		  .on('end',function(d,i){
 			var visible = d3.select(".labels").selectAll("text").filter(function(textDat){return textDat.index==d.index}).data()[0].visible;
-			d3.select(this).style("opacity",visible?0:.5)
+			d3.select(this).style("opacity",visible?0:1)
 			});
       
       polyline = svg.select(".lines").selectAll("polyline")

@@ -46,6 +46,7 @@ class Visualisation(models.Model):
     colour = models.CharField(null=True,blank=True,max_length=255,default="#e84439")
     x_label = models.CharField(null=True,blank=True,max_length=255)
     y_label = models.CharField(null=True,blank=True,max_length=255)
+    y_axis_ticks = models.IntegerField(null=True,blank=True)
     x_text_rotation = models.IntegerField(default=45)
     save_as_template = models.BooleanField(default=False)
     labels_on_chart = models.BooleanField(default=False)

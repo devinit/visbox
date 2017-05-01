@@ -5,12 +5,12 @@ path.slice{
 }
 
 polyline{
-	opacity: .3;
-	stroke: black;
+	opacity: 1;
+	stroke: #a9a6aa;
 	stroke-width: 2px;
 	fill: none;
 }
-
+#visTitle {color:#e84439;}
 </style>
 {% endblock %}
 
@@ -39,7 +39,7 @@ function NaNSafeSort(x,y){
       return a-b;
 };
 	
-var duration = 1000;
+var duration = 200;
 function contrast(hex){
   var color = d3.color(hex);
   var lum = 0.2126*color.r + 0.7152*color.g + 0.0722*color.b;
@@ -433,7 +433,28 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
                   var d2 = interpolate(t);
                   return midAngle(d2) < Math.PI ? "start":"end";
               };
-          });
+          }).on('end',function(d,i){
+			var text = d3.select(this),
+				words = text.text().split(/\s+/).reverse(),
+				word,
+				line = [],
+				lineNumber = 0,
+				lineHeight = 1, // ems
+				y = text.attr("y"),
+				dy = parseFloat(text.attr("dy")),
+				fontsize = parseFloat(text.style("font-size"))
+				tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+			while (word = words.pop()) {
+			  line.push(word);
+			  tspan.text(line.join(" "));
+			  if (tspan.node().getComputedTextLength() > radius/2) {
+				line.pop();
+				tspan.text(line.join(" "));
+				line = [word];
+				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", fontsize ).text(word);
+			  }
+			}
+			});
       
       text = svg.select(".labels").selectAll("text")
           .data(pie(data), key);
@@ -459,7 +480,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       
       polyline.transition().duration(duration)
           .style("opacity", function(d) {
-              return d.data.value == 0 ? 0 : .5;
+              return d.data.value == 0 ? 0 : 1;
           })
           .attrTween("points", function(d){
               this._current = this._current;
