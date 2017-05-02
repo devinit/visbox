@@ -1,32 +1,22 @@
+<style>
+  .axis--y .tick line, .axis--x .tick line {display:none;}
+  .tick text {color:#a9a6aa;}
+  .axis--y .domain {display:none;}
+  .domain {stroke:#443e42;}
+  .rules .tick line {stroke:#a9a6aa;}
+  .rules .domain {display:none;}
+  #yaxislabel {color:#443e42;}
+  #xaxislabel {color:#443e42;}
+  #visTitle {color:#e84439;}
+  .legend text {color:#443e42;}
+</style>
 <h1 id="visTitle"></h1>
 <svg width="960" height="500" id="vis">
-  <text id="yaxislabel" transform="rotate(-90)" style="font-weight:bold;"></text>
-  <text id="xaxislabel" style="font-weight:bold;"></text>
+  <text id="yaxislabel" transform="rotate(-90)" ></text>
+  <text id="xaxislabel"></text>
 </svg>
 <div id="tooltip"></div>
 <script>
-//function columnType(arr) {
-//    var typeArr = arr.map(function(d){return $.type(d)});
-//    if(typeArr.length == 0)
-//        return null;
-//    var modeMap = {};
-//    var maxEl = typeArr[0], maxCount = 1;
-//    for(var i = 0; i < typeArr.length; i++)
-//    {
-//        var el = typeArr[i];
-//        if(modeMap[el] == null)
-//            modeMap[el] = 1;
-//        else
-//            modeMap[el]++;  
-//        if(modeMap[el] > maxCount)
-//        {
-//            maxEl = el;
-//            maxCount = modeMap[el];
-//        }
-//    }
-//    return maxEl;
-//};
-
 function columnType(arr) {
   var parsedArray = arr.map(function(d){return isNaN(parseFloat(d))});
   var arrAvg = d3.mean(parsedArray);
@@ -114,6 +104,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     var xIndicator = $("select[name='x_indicator']").val();
     var yIndicator = $("select[name='y_indicator']").val();
     var format_entry = $("input[name='label_format']").val();
+    var y_axis_ticks = $("input[name='y_axis_ticks']").val();
     try{
       var format = d3.format(format_entry); 
     }catch(err){
@@ -188,14 +179,37 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     $("input[name='y_maximum_value']").val(ymax);
     y.domain([0, ymax]);
     
+    if (y_axis_ticks!="") {
+      var y_ticks = parseInt(y_axis_ticks);
+      
+      var rules = g.append("g")			
+      .attr("class", "rules")
+      .call(d3.axisLeft(y)
+          .tickSize(-width)
+          .ticks(y_ticks)
+          .tickFormat("")
+      );
+      
+      var yaxis = g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(y_ticks).tickFormat(format));
+    }else{
+      var rules = g.append("g")			
+      .attr("class", "rules")
+      .call(d3.axisLeft(y)
+          .tickSize(-width)
+          .tickFormat("")
+      );
+      
+      var yaxis = g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).tickFormat(format));
+    };
+    
     var xaxis = g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
-    
-    var yaxis = g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).tickFormat(format))
+        .call(d3.axisBottom(x).tickSizeOuter(0));
         
     yaxis.append("text")
       .attr("transform", "rotate(-90)")
@@ -256,6 +270,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       var labelsOnChart = $("input:checked[name='labels_on_chart']").length==1;
       var labelFontSize = parseInt($("input[name='label_font_size']").val());
       var format_entry = $("input[name='label_format']").val();
+      var y_axis_ticks = $("input[name='y_axis_ticks']").val();
       try{
         var format = d3.format(format_entry); 
       }catch(err){
@@ -338,8 +353,22 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       };
       y.domain([0, ymax]);
   
-      yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
-      xaxis.transition().call(d3.axisBottom(x))
+      if (y_axis_ticks!="") {
+          var y_ticks = parseInt(y_axis_ticks);
+          rules.call(d3.axisLeft(y)
+            .tickSize(-width)
+            .ticks(y_ticks)
+            .tickFormat("")
+          )
+          yaxis.transition().call(d3.axisLeft(y).ticks(y_ticks).tickFormat(format))
+        }else{
+          rules.call(d3.axisLeft(y)
+            .tickSize(-width)
+            .tickFormat("")
+          )
+          yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
+        };
+      xaxis.transition().call(d3.axisBottom(x).tickSizeOuter(0))
       xaxis.attr("transform", "translate(0," + height + ")")
       xaxis.selectAll("text")
         .attr("transform", "rotate("+xRotation+")")
@@ -349,9 +378,9 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         .attr("class", "bar")
         .style("fill",selectedColour)
         .attr("onmouseout","$('#tooltip').hide()")
-        .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+        .attr("x", function(d) { return x(d[xIndicator]) + 2 + (width/xCategories.length)*(1/6); })
         .attr("y", function(d) { return y(d[yIndicator]); })
-        .attr("width", d3.max([(width/xCategories.length)-1, 1]))
+        .attr("width", d3.max([(width/xCategories.length)*(2/3),1]))
         .attr("height", function(d) { return height - y(d[yIndicator]); })
         .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
         
@@ -359,9 +388,9 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         .attr("class", "bar")
         .style("fill",selectedColour)
         .attr("onmouseout","$('#tooltip').hide()")
-        .attr("x", function(d) { return x(d[xIndicator]) + 2; })
+        .attr("x", function(d) { return x(d[xIndicator]) + 2 + (width/xCategories.length)*(1/6); })
         .attr("y", function(d) { return y(d[yIndicator]); })
-        .attr("width", d3.max([(width/xCategories.length)-1, 1]))
+        .attr("width", d3.max([(width/xCategories.length)*(2/3),1]))
         .attr("height", function(d) { return height - y(d[yIndicator]); })
         .attr("onmouseover",function(d){return "$('#tooltip').text('"+format(d[yIndicator])+"')"});
         
@@ -369,12 +398,19 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       
       var labels = g.selectAll(".label").data(data)
         .attr("class","label")
-        .style("fill",contrast(selectedColour))
         .attr("text-anchor", "middle")
         .style("font-size",labelFontSize)
         .attr("x", function(d) { return x(d[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1, 1]))/2 })
-        .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
-        .text(function(d){return format(d[yIndicator])});
+        .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2 + labelFontSize/2; })
+        .text(function(d){return format(d[yIndicator])})
+        .each(function(d,i) {
+              var bbox = this.getBBox();
+              var barHeight = height - y(d[yIndicator]);
+              var barWidth = d3.max([(width/xCategories.length)*(2/3),1]);
+              d.unsquished =  (barHeight > bbox.height) & (barWidth > bbox.width);
+              })
+          .attr("y", function(d) { return d.unsquished?y(d[yIndicator]) + (height - y(d[yIndicator]))/2 + labelFontSize/2:y(d[yIndicator]) - labelFontSize/2; })
+          .style("fill",function(d){return d.unsquished?contrast(selectedColour):"black"});
         
         if (labelsOnChart) {
           labels.enter().append("text")
@@ -383,8 +419,16 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           .attr("text-anchor", "middle")
           .style("font-size",labelFontSize)
           .attr("x", function(d) { return x(d[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1, 1]))/2 })
-          .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2; })
-          .text(function(d){return format(d[yIndicator])});
+          .attr("y", function(d) { return y(d[yIndicator]) + (height - y(d[yIndicator]))/2 + labelFontSize/2; })
+          .text(function(d){return format(d[yIndicator])})
+          .each(function(d,i) {
+              var bbox = this.getBBox();
+              var barHeight = height - y(d[yIndicator]);
+              var barWidth = d3.max([(width/xCategories.length)*(2/3),1]);
+              d.unsquished =  (barHeight > bbox.height) & (barWidth > bbox.width);
+              })
+          .attr("y", function(d) { return d.unsquished?y(d[yIndicator]) + (height - y(d[yIndicator]))/2 + labelFontSize/2:y(d[yIndicator]) - labelFontSize/2; })
+          .style("fill",function(d){return d.unsquished?contrast(selectedColour):"black"});
           
           labels.exit().remove();
         }else{

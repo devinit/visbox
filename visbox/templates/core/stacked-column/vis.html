@@ -443,7 +443,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             .tickFormat("")
           )
           yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
-        }
+        };
         xaxis.transition().call(d3.axisBottom(x).tickSizeOuter(0))
         xaxis.attr("transform", "translate(0," + height + ")")
         xaxis.selectAll("text")
@@ -517,7 +517,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           .attr("text-anchor", "middle")
           .style("font-size",labelFontSize)
           .attr("x", function(d) { return x(d.data[xIndicator]) + 2 + (d3.max([(width/xCategories.length)-1,1]))/2 })
-          .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2 + labelFontSize/2;; })
+          .attr("y", function(d) { return y(d[1]) + (y(d[0]) - y(d[1]))/2 + labelFontSize/2; })
           .text(function(d){return format(d[1] - d[0])})
           .each(function(d,i) {
               var bbox = this.getBBox();
