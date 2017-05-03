@@ -61,7 +61,12 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
+{% if dataset %}
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+{% else %}
+  var error = null;
+  var csvDat = JSON.parse('{{dataString|safe}}');
+{% endif %}
     if (error) throw error;
     
     var filter_by = $("select[name='filter_by']").val();
@@ -557,16 +562,23 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             .selectAll(".group")
             .data(keys.slice().reverse())
             .enter().append("g")
-            .attr("transform", function(d, i) { return "translate("+margin.left+"," + i * 20 + ")"; });
+            .attr("transform", function(d, i) {
+              if (legend_position=="tr" || legend_position=="tl") {
+                return "translate("+margin.left+"," + i * 20 + ")";
+              }
+              if (legend_position=="cr") {
+                return "translate("+(svgWidth-margin.right+20)+"," + (svgHeight/2 - (i * 20)) + ")";
+              }
+            });
       
         legend.append("rect")
-            .attr("x", legend_position=="tr"?width - 19:0)
+            .attr("x", legend_position=="tr"?width-19:0)
             .attr("width", 19)
             .attr("height", 19)
             .attr("fill", c);
       
         legend.append("text")
-            .attr("x", legend_position=="tr"?width - 20:20)
+            .attr("x", legend_position=="tr"?width-20:20)
             .attr("y", 9.5)
             .attr("dy", "0.32em")
             .text(function(d) { return d; });
@@ -578,5 +590,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     
     $('select').change(function(){update()});
     $('input').change(function(){update()});
+{% if dataset %}
 });
+{% endif %}
 </script>

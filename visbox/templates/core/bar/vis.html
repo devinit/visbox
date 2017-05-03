@@ -49,7 +49,12 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
+{% if dataset %}
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+{% else %}
+  var error = null;
+  var csvDat = JSON.parse('{{dataString|safe}}');
+{% endif %}
     if (error) throw error;
     
     var filter_by = $("select[name='filter_by']").val();
@@ -377,5 +382,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     
     $('select').change(function(){update()});
     $('input').change(function(){update()});
+{% if dataset %}
 });
+{% endif %}
 </script>

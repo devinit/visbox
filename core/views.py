@@ -291,5 +291,36 @@ def csv(request,datasetPK):
     response['Filename'] = str(datasetPK)+".csv"
     response['Content-Disposition'] = 'attachment; filename='+str(datasetPK)+".csv"
     return response
+
+def api(request):
+    if request.method=="GET":
+        templatePK = request.GET.get("template",False)
+        visualisation = get_object_or_404(Visualisation,pk=templatePK)
+        chart_type = visualisation.chart_type
         
+        dataString = request.GET.get("data",False)
+        if dataString:
+            dataset = None
+            df = pd.read_json(dataString)
+            categorical = list(df.select_dtypes(include=['object']))
+            numerical = list(df.select_dtypes(exclude=['object']))
+        else:
+            dataset = visualisation.dataset
+            df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+            categorical = list(df.select_dtypes(include=['object']))
+            numerical = list(df.select_dtypes(exclude=['object']))
+        if chart_type == "column":
+            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "bar":
+            form = BarForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "donut":
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "pie":
+            form = PieForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "stacked-column":
+            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
+        return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
+    else:
+        response = HttpResponse("Please only POST to this URL.")
+        return response
 

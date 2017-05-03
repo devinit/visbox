@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^view/(?P<chartPK>\d+)/$', views.viewVis, name='core.views.viewVis'),
     url(r'^edit/(?P<chartPK>\d+)/$', views.editVis, name='core.views.editVis'),
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
+    url(r'^api/$',views.api,name='core.views.api'),
 ]

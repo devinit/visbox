@@ -1,0 +1,46 @@
+<html>
+    <head>
+    <title>Bar chart</title>
+     {% load staticfiles %}    
+            <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
+            <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
+            <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
+    <style>
+    #vis{
+      padding-left:10px;
+    }
+    
+    select {
+        font-size: 1em;
+        margin:0.67em;
+        -webkit-margin-before: 0.67em;
+        -webkit-margin-after: 0.67em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+    
+    h1 {
+      font-family: Arial;
+      font-weight: normal;
+    }
+    
+    #tooltip{
+                position:absolute;
+                background:white;
+                border:solid black 1px;
+                border-radius:5px;
+                padding:5px;
+                display:none;
+            }
+            
+    </style>
+    </head>
+    <body>
+    <div style="display: none;">
+      {{ form.as_p }}
+    </div>
+    <div style="float:left;width:100%">
+      {% include "core/bar/vis.html" %}    
+    </div>
+    </body>
+</html>

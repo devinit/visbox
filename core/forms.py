@@ -97,7 +97,7 @@ class StackedColumnForm(ModelForm):
                   ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left')]
+        LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
         widgets = {
             'dataset':forms.HiddenInput(),
             'sort':forms.RadioSelect(choices=SORT_CHOICES),

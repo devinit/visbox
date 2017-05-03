@@ -65,7 +65,12 @@ var svg = d3.select("svg"),
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
+{% if dataset %}
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+{% else %}
+  var error = null;
+  var csvDat = JSON.parse('{{dataString|safe}}');
+{% endif %}
     if (error) throw error;
 	
 	var filter_by = $("select[name='filter_by']").val();
@@ -491,7 +496,6 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
                   _this._current = d2;
                   var pos = outerArc.centroid(d2);
                   pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-				  console.log(pos)
                   return [arc.centroid(d2), outerArc.centroid(d2), pos];
               };			
           });
@@ -509,5 +513,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     
     $('select').change(function(){update()});
     $('input').change(function(){update()});
+{% if dataset %}
 });
+{% endif %}
 </script>
