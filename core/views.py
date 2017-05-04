@@ -327,44 +327,54 @@ def api(request):
     
 def config(request):
     if request.method=="GET":
-        templatePK = request.GET.get("template",False)
-        visualisation = get_object_or_404(Visualisation,pk=templatePK)
-        chart_type = visualisation.chart_type
-        
+        templatePKs = request.GET.get("template",False)
         dataString = request.GET.get("data",False)
-        if dataString:
-            dataset = None
-            df = pd.read_json(dataString)
-            categorical = list(df.select_dtypes(include=['object']))
-            numerical = list(df.select_dtypes(exclude=['object']))
-        else:
-            dataset = visualisation.dataset
-            df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-            categorical = list(df.select_dtypes(include=['object']))
-            numerical = list(df.select_dtypes(exclude=['object']))
-        if chart_type == "column":
-            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "bar":
-            form = BarForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "donut":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "pie":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "stacked-column":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        config = {}
+        fileFormat = request.GET.get("format",False)
+        
+        configs = []
         root = Element("config")
-        for field in form:
-            if(field.value()):
-                config[field.html_name] = field.value()
-                child = SubElement(root,field.html_name)
-                child.text = str(field.value())
-        fileFormat = dataString = request.GET.get("format",False)
+            
+        for templatePK in templatePKs.split(","):        
+            visualisation = get_object_or_404(Visualisation,pk=templatePK)
+            chart_type = visualisation.chart_type
+            if dataString:
+                dataset = None
+                df = pd.read_json(dataString)
+                categorical = list(df.select_dtypes(include=['object']))
+                numerical = list(df.select_dtypes(exclude=['object']))
+            else:
+                dataset = visualisation.dataset
+                df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+                categorical = list(df.select_dtypes(include=['object']))
+                numerical = list(df.select_dtypes(exclude=['object']))
+            if chart_type == "column":
+                form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
+            if chart_type == "bar":
+                form = BarForm(instance=visualisation,x=categorical,y=numerical)
+            if chart_type == "donut":
+                form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+            if chart_type == "pie":
+                form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+            if chart_type == "stacked-column":
+                form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
+            
+            config = {}
+            config['template'] = int(templatePK)
+            chart = SubElement(root,"chart")
+            child = SubElement(chart,"template")
+            child.text = str(templatePK)
+            for field in form:
+                if(field.value()):
+                    config[field.html_name] = field.value()
+                    child = SubElement(chart,field.html_name)
+                    child.text = str(field.value())
+            configs.append(config)
+        
         if fileFormat=="json":
-            return HttpResponse(json.dumps(config), content_type="application/json")
+            return HttpResponse(json.dumps(configs), content_type="application/json")
         if fileFormat=="xml":
             return HttpResponse(tostring(root, encoding='utf8', method='xml'),content_type='text/xml')
-        return HttpResponse(json.dumps(config), content_type="application/json")
+        return HttpResponse(json.dumps(configs), content_type="application/json")
     else:
         response = HttpResponse("Please only POST to this URL.")
         return response
