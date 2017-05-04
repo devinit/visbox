@@ -9,6 +9,7 @@ from StringIO import StringIO
 from django.contrib.auth.decorators import login_required
 import json
 from django.contrib import messages
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 
 
 def index(request):
@@ -316,10 +317,54 @@ def api(request):
         if chart_type == "donut":
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "pie":
-            form = PieForm(instance=visualisation,x=categorical,y=numerical)
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "stacked-column":
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
         return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
+    else:
+        response = HttpResponse("Please only POST to this URL.")
+        return response
+    
+def config(request):
+    if request.method=="GET":
+        templatePK = request.GET.get("template",False)
+        visualisation = get_object_or_404(Visualisation,pk=templatePK)
+        chart_type = visualisation.chart_type
+        
+        dataString = request.GET.get("data",False)
+        if dataString:
+            dataset = None
+            df = pd.read_json(dataString)
+            categorical = list(df.select_dtypes(include=['object']))
+            numerical = list(df.select_dtypes(exclude=['object']))
+        else:
+            dataset = visualisation.dataset
+            df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+            categorical = list(df.select_dtypes(include=['object']))
+            numerical = list(df.select_dtypes(exclude=['object']))
+        if chart_type == "column":
+            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "bar":
+            form = BarForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "donut":
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "pie":
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "stacked-column":
+            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
+        config = {}
+        root = Element("config")
+        for field in form:
+            if(field.value()):
+                config[field.html_name] = field.value()
+                child = SubElement(root,field.html_name)
+                child.text = str(field.value())
+        fileFormat = dataString = request.GET.get("format",False)
+        if fileFormat=="json":
+            return HttpResponse(json.dumps(config), content_type="application/json")
+        if fileFormat=="xml":
+            return HttpResponse(tostring(root, encoding='utf8', method='xml'),content_type='text/xml')
+        return HttpResponse(json.dumps(config), content_type="application/json")
     else:
         response = HttpResponse("Please only POST to this URL.")
         return response
