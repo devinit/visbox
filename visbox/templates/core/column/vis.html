@@ -364,15 +364,15 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             .ticks(y_ticks)
             .tickFormat("")
           )
-          yaxis.transition().call(d3.axisLeft(y).ticks(y_ticks).tickFormat(format))
+          yaxis.transition().duration(0)().call(d3.axisLeft(y).ticks(y_ticks).tickFormat(format))
         }else{
           rules.call(d3.axisLeft(y)
             .tickSize(-width)
             .tickFormat("")
           )
-          yaxis.transition().call(d3.axisLeft(y).tickFormat(format))
+          yaxis.transition().duration(0)().call(d3.axisLeft(y).tickFormat(format))
         };
-      xaxis.transition().call(d3.axisBottom(x).tickSizeOuter(0))
+      xaxis.transition().duration(0)().call(d3.axisBottom(x).tickSizeOuter(0))
       xaxis.attr("transform", "translate(0," + height + ")")
       xaxis.selectAll("text")
         .attr("transform", "rotate("+xRotation+")")

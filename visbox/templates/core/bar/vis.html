@@ -322,8 +322,8 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         };
         x.domain([0, xmax]);
     
-        yaxis.transition().call(d3.axisLeft(y))
-        xaxis.transition().call(d3.axisBottom(x).tickFormat(format))
+        yaxis.transition().duration(0).call(d3.axisLeft(y))
+        xaxis.transition().duration(0).call(d3.axisBottom(x).tickFormat(format))
         xaxis.attr("transform", "translate(0," + height + ")")
         xaxis.selectAll("text")
           .attr("transform", "rotate("+xRotation+")")
