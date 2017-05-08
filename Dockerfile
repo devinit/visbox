@@ -8,7 +8,9 @@ ADD ./ /src
 WORKDIR /src
 # install dependencies
 RUN apt-get update
+RUN apt-get --assume-yes install wget
+RUN /src/grab_chrome.sh
 RUN pip install -r requirements.txt
 RUN python manage.py collectstatic --noinput
 
-CMD gunicorn -w 2 -b 0.0.0.0:80 visbox.wsgi
+CMD gunicorn -w 2 -k gevent -b 0.0.0.0:80 visbox.wsgi

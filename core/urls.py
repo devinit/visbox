@@ -19,4 +19,6 @@ urlpatterns = [
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
     url(r'^api/$',views.api,name='core.views.api'),
     url(r'^config/$',views.config,name='core.views.config'),
+    url(r'^png/(?P<templatePK>\d+).png/$', views.png, name='core.views.png'),
+    url(r'^svg/(?P<templatePK>\d+).svg/$', views.svg, name='core.views.svg'),
 ]

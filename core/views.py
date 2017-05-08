@@ -10,7 +10,9 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.contrib import messages
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring
-
+from django.core.urlresolvers import reverse
+from utils import *
+from django.core.files.temp import NamedTemporaryFile
 
 def index(request):
     user = request.user
@@ -378,4 +380,33 @@ def config(request):
     else:
         response = HttpResponse("Please only POST to this URL.")
         return response
+    
+def png(request,templatePK):
+    visualisation = get_object_or_404(Visualisation,pk=templatePK)
+    dataString = request.GET.get("data",False)
+    if dataString:
+        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)+"&data="+dataString
+    else:
+        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)
+
+    newPNG = NamedTemporaryFile(suffix='.png')
+    chromePNG(url,newPNG.name)
+    response = HttpResponse(newPNG,content_type="image/png")
+    response['Filename'] = visualisation.title+".png"
+    response['Content-Disposition'] = 'attachment; filename='+visualisation.title+".png"
+    return response
+
+def svg(request,templatePK):
+    visualisation = get_object_or_404(Visualisation,pk=templatePK)
+    dataString = request.GET.get("data",False)
+    if dataString:
+        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)+"&data="+dataString
+    else:
+        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)
+
+    source_code = chromeSVG(url)
+    response = HttpResponse(source_code,content_type="image/svg+xml")
+    response['Filename'] = visualisation.title+".svg"
+    response['Content-Disposition'] = 'attachment; filename='+visualisation.title+".svg"
+    return response
 
