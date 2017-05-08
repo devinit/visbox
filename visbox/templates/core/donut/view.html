@@ -61,9 +61,13 @@
         };
         copy = function(){
           location.href = '{% url 'core.views.createVis'  visualisation.chart_type visualisation.dataset.pk %}?copy={{visualisation.pk}}'
-        }
+        };
+        goToPNGPage = function(){
+          location.href = '{% url 'core.views.png'  visualisation.pk  %}';
+        };
       </script>
       <button id="print" onclick="crowbar()">Export as vector</button>
+      <button id="print" onclick="goToPNGPage()">Export as PNG</button>
       <button id="print" onclick="copy()">Create a copy</button>
       {% if user == visualisation.creator %}
       <button id="edit" onclick="goToEditPage()">Edit</button>
