@@ -63,7 +63,6 @@
     </div>
     <script>
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
-        console.log(config)
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             vb_column("#column_chart",config,csvDat);
         });

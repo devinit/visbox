@@ -2,34 +2,21 @@
 
     {% block title %} Donut chart {% endblock %}
     {% block head %}
+    {% load staticfiles %} 
+    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/donut.js' %}'></script>
     <style>
-    #vis{
-      padding-left:10px;
+    
+    path.slice{
+        stroke-width:2px;
     }
     
-    select {
-        font-size: 1em;
-        margin:0.67em;
-        -webkit-margin-before: 0.67em;
-        -webkit-margin-after: 0.67em;
-        -webkit-margin-start: 0px;
-        -webkit-margin-end: 0px;
+    polyline{
+        opacity: 1;
+        stroke: #a9a6aa;
+        stroke-width: 2px;
+        fill: none;
     }
-    
-    h1 {
-      font-family: Arial;
-      font-weight: normal;
-    }
-    
-    #tooltip{
-                position:absolute;
-                background:white;
-                border:solid black 1px;
-                border-radius:5px;
-                padding:5px;
-                display:none;
-            }
-    
     </style>
     {% endblock %}    
     {% block content %}
@@ -56,7 +43,7 @@
       <button id="print" onclick="crowbar()">Export as vector</button>
     </div>
     <div style="float:left;width:80%">
-      {% include "core/donut/vis.html" %}    
+      <svg id="donut_chart"></svg>  
     </div>
     <script>
     $('#visform').on('keyup keypress', function(e) {
@@ -65,6 +52,18 @@
         e.preventDefault();
         return false;
       }
+    });
+    
+    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+          //Initial draw with config, subsequent draws with form2config
+          vb_donut("#donut_chart",config,csvDat);
+          function update() {
+              vb_donut("#donut_chart",form2config("#visform"),csvDat);
+          };
+          $('select').change(function(){update()});
+          $('input').change(function(){update()});
+        });
     });
     </script>
     {% endblock %}

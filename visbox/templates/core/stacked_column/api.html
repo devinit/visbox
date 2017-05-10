@@ -1,39 +1,38 @@
 <html>
     <head>
-    <title>Pie chart</title>
+    <title>Stacked column chart</title>
      {% load staticfiles %}    
     <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
     <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/charts/pie.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/stacked_column.js' %}'></script>
     <style>
-    path.slice{
-        stroke-width:2px;
-        stroke: #fff;
-    }
-    
-    polyline{
-        opacity: 1;
-        stroke: #a9a6aa;
-        stroke-width: 2px;
-        fill: none;
-    }
+        .axis--y .tick line, .axis--x .tick line {display:none;}
+        .tick text {color:#a9a6aa;}
+        .axis--y .domain {display:none;}
+        .domain {stroke:#443e42;}
+        .rules .tick line {stroke:#a9a6aa;}
+        .rules .domain {display:none;}
+        #yaxislabel {color:#443e42;}
+        #xaxislabel {color:#443e42;}
+        #visTitle {color:#e84439;}
+        .legend text {color:#443e42;}
     </style>
     </head>
     <body>
     <div style="float:left;width:100%">
-        <svg id="pie_chart"></svg>
+        <svg id="stacked_column_chart"></svg>
     </div>
     <script>
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
         {% if dataset %}
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
-            vb_pie("#pie_chart",config,csvDat);
+            vb_stacked_column("#stacked_column_chart",config,csvDat);
         });
         {% else %}
         var csvDat = JSON.parse('{{dataString|safe}}');
-        vb_pie("#pie_chart",config,csvDat);
+        vb_stacked_column("#stacked_column_chart",config,csvDat);
         {% endif %}
     });
     </script>

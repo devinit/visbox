@@ -138,7 +138,7 @@ def createVis(request,chart,datasetPK):
                 form = BarForm(x=dataset.numerical,y=dataset.categorical)
             return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form})
     #stacked column charts
-    elif chart=="stacked-column":
+    elif chart=="stacked_column":
         dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
         dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
         if request.method=="POST":
@@ -146,13 +146,13 @@ def createVis(request,chart,datasetPK):
             if form.is_valid():
                 visualisation = form.save(commit=False)
                 visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'stacked-column'
+                visualisation.chart_type = 'stacked_column'
                 visualisation.dataset = dataset
                 visualisation.save()
                 return redirect('core.views.viewVis',chartPK=visualisation.pk)
             else:
                 #Vis invalid
-                return render(request,'core/stacked-column/create.html', {"user":user,"dataset":dataset,"form":form})
+                return render(request,'core/stacked_column/create.html', {"user":user,"dataset":dataset,"form":form})
         else:
             #GET request
             chartPK = request.GET.get("copy",False)
@@ -160,7 +160,7 @@ def createVis(request,chart,datasetPK):
                 form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
             else:
                 form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/stacked-column/create.html', {"user":user,"dataset":dataset,"form":form})
+            return render(request,'core/stacked_column/create.html', {"user":user,"dataset":dataset,"form":form})
     #donut charts
     elif chart=="donut":
         dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
@@ -226,9 +226,9 @@ def viewVis(request,chartPK):
     if visualisation.chart_type == "bar":
         form = BarForm(instance=visualisation,x=dataset.numerical,y=dataset.categorical)
         return render(request,'core/bar/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "stacked-column":
+    if visualisation.chart_type == "stacked_column":
         form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/stacked-column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+        return render(request,'core/stacked_column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     if visualisation.chart_type == "donut":
         form = DonutForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
         return render(request,'core/donut/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
@@ -257,12 +257,12 @@ def editVis(request,chartPK):
             form.save()
             return redirect('core.views.viewVis',chartPK=visualisation.pk)
         return render(request,'core/bar/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "stacked-column":
+    if visualisation.chart_type == "stacked_column":
         form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
         if form.is_valid():
             form.save()
             return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/stacked-column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+        return render(request,'core/stacked_column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     if visualisation.chart_type == "donut":
         form = DonutForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
         if form.is_valid():
@@ -320,7 +320,7 @@ def api(request,templatePK):
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "pie":
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "stacked-column":
+        if chart_type == "stacked_column":
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
         return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
     else:
@@ -349,7 +349,7 @@ def config(request,templatePK):
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "pie":
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "stacked-column":
+        if chart_type == "stacked_column":
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
 
         config['template'] = int(templatePK)
@@ -357,12 +357,11 @@ def config(request,templatePK):
         child.text = str(templatePK)
         for field in form:
             val = field.value()
-            if val:
-                if isinstance(val,decimal.Decimal):
-                    val = float(val)
-                config[field.html_name] = val
-                child = SubElement(root,field.html_name)
-                child.text = str(field.value())
+            if isinstance(val,decimal.Decimal):
+                val = float(val)
+            config[field.html_name] = val
+            child = SubElement(root,field.html_name)
+            child.text = str(field.value())
         
         if fileFormat=="json":
             return HttpResponse(json.dumps(config), content_type="application/json")
@@ -377,9 +376,9 @@ def png(request,templatePK):
     visualisation = get_object_or_404(Visualisation,pk=templatePK)
     dataString = request.GET.get("data",False)
     if dataString:
-        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)+"&data="+dataString
+        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})+"?data="+dataString
     else:
-        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)
+        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
 
     newPNG = NamedTemporaryFile(suffix='.png')
     chromePNG(url,newPNG.name)
@@ -392,9 +391,9 @@ def svg(request,templatePK):
     visualisation = get_object_or_404(Visualisation,pk=templatePK)
     dataString = request.GET.get("data",False)
     if dataString:
-        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)+"&data="+dataString
+        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})+"?data="+dataString
     else:
-        url = "http://127.0.0.1"+reverse('core.views.api')+"?template="+str(templatePK)
+        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
 
     source_code = chromeSVG(url)
     response = HttpResponse(source_code,content_type="image/svg+xml")

@@ -2,45 +2,39 @@
     <head>
     <title>Donut chart</title>
      {% load staticfiles %}    
-            <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
-            <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
-            <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
+    <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
+    <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/donut.js' %}'></script>
     <style>
-    #vis{
-      padding-left:10px;
+    path.slice{
+        stroke-width:2px;
     }
     
-    select {
-        font-size: 1em;
-        margin:0.67em;
-        -webkit-margin-before: 0.67em;
-        -webkit-margin-after: 0.67em;
-        -webkit-margin-start: 0px;
-        -webkit-margin-end: 0px;
+    polyline{
+        opacity: 1;
+        stroke: #a9a6aa;
+        stroke-width: 2px;
+        fill: none;
     }
-    
-    h1 {
-      font-family: Arial;
-      font-weight: normal;
-    }
-    
-    #tooltip{
-                position:absolute;
-                background:white;
-                border:solid black 1px;
-                border-radius:5px;
-                padding:5px;
-                display:none;
-            }
-            
     </style>
     </head>
     <body>
-    <div style="display: none;">
-      {{ form.as_p }}
-    </div>
     <div style="float:left;width:100%">
-      {% include "core/donut/vis.html" %}    
+        <svg id="donut_chart"></svg>
     </div>
+    <script>
+    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        {% if dataset %}
+        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+            vb_donut("#donut_chart",config,csvDat);
+        });
+        {% else %}
+        var csvDat = JSON.parse('{{dataString|safe}}');
+        vb_donut("#donut_chart",config,csvDat);
+        {% endif %}
+    });
+    </script>
     </body>
 </html>

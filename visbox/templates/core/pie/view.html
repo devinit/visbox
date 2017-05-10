@@ -2,42 +2,26 @@
 
     {% block title %} Pie chart {% endblock %}
     {% block head %}
+    {% load staticfiles %}    
+    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/pie.js' %}'></script>
     <style>
-    #vis{
-      padding-left:10px;
+    path.slice{
+        stroke-width:2px;
+        stroke: #fff;
     }
     
-    select {
-        font-size: 1em;
-        margin:0.67em;
-        -webkit-margin-before: 0.67em;
-        -webkit-margin-after: 0.67em;
-        -webkit-margin-start: 0px;
-        -webkit-margin-end: 0px;
+    polyline{
+        opacity: 1;
+        stroke: #a9a6aa;
+        stroke-width: 2px;
+        fill: none;
     }
-    
-    h1 {
-      font-family: Arial;
-      font-weight: normal;
-    }
-    
-    #tooltip{
-                position:absolute;
-                background:white;
-                border:solid black 1px;
-                border-radius:5px;
-                padding:5px;
-                display:none;
-            }
-            
     button {display:block;margin:10px;}
     
     </style>
     {% endblock %}    
     {% block content %}
-    <div style="display: none;">
-      {{ form.as_p }}
-    </div>
     <div style="float:left;width:20%;overflow-y:scroll;">
       <script>
         {% load staticfiles %}   
@@ -75,6 +59,13 @@
       {% endif %}
     </div>
     <div style="float:left;width:80%">
-      {% include "core/pie/vis.html" %}    
+      <svg id="pie_chart"></svg> 
     </div>
+    <script>
+    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+            vb_pie("#pie_chart",config,csvDat);
+        });
+    });
+    </script>
     {% endblock %}
