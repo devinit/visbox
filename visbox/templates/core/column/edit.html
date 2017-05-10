@@ -2,33 +2,21 @@
 
     {% block title %} Column chart {% endblock %}
     {% block head %}
+    {% load staticfiles %} 
+    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/column.js' %}'></script>
     <style>
-    #vis{
-      padding-left:10px;
-    }
     
-    select {
-        font-size: 1em;
-        margin:0.67em;
-        -webkit-margin-before: 0.67em;
-        -webkit-margin-after: 0.67em;
-        -webkit-margin-start: 0px;
-        -webkit-margin-end: 0px;
-    }
-    
-    h1 {
-      font-family: Arial;
-      font-weight: normal;
-    }
-    
-    #tooltip{
-                position:absolute;
-                background:white;
-                border:solid black 1px;
-                border-radius:5px;
-                padding:5px;
-                display:none;
-            }
+    .axis--y .tick line, .axis--x .tick line {display:none;}
+    .tick text {color:#a9a6aa;}
+    .axis--y .domain {display:none;}
+    .domain {stroke:#443e42;}
+    .rules .tick line {stroke:#a9a6aa;}
+    .rules .domain {display:none;}
+    #yaxislabel {color:#443e42;}
+    #xaxislabel {color:#443e42;}
+    #visTitle {color:#e84439;}
+    .legend text {color:#443e42;}
     
     </style>
     {% endblock %}    
@@ -56,7 +44,7 @@
       <button id="print" onclick="crowbar()">Export as vector</button>
     </div>
     <div style="float:left;width:80%">
-      {% include "core/column/vis_refactor.html" %}    
+      <svg id="column_chart"></svg>  
     </div>
     <script>
     $('#visform').on('keyup keypress', function(e) {
@@ -65,6 +53,18 @@
         e.preventDefault();
         return false;
       }
+    });
+    
+    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+          //Initial draw with config, subsequent draws with form2config
+          vb_column("#column_chart",config,csvDat);
+          function update() {
+              vb_column("#column_chart",form2config("#visform"),csvDat);
+          };
+          $('select').change(function(){update()});
+          $('input').change(function(){update()});
+        });
     });
     </script>
     {% endblock %}

@@ -17,8 +17,8 @@ urlpatterns = [
     url(r'^view/(?P<chartPK>\d+)/$', views.viewVis, name='core.views.viewVis'),
     url(r'^edit/(?P<chartPK>\d+)/$', views.editVis, name='core.views.editVis'),
     url(r'^gallery/$', views.gallery, name='core.views.gallery'),
-    url(r'^api/$',views.api,name='core.views.api'),
-    url(r'^config/$',views.config,name='core.views.config'),
+    url(r'^api/(?P<templatePK>\d+)/$',views.api,name='core.views.api'),
+    url(r'^config/(?P<templatePK>\d+)/$',views.config,name='core.views.config'),
     url(r'^png/(?P<templatePK>\d+).png/$', views.png, name='core.views.png'),
     url(r'^svg/(?P<templatePK>\d+).svg/$', views.svg, name='core.views.svg'),
 ]

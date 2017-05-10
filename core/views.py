@@ -296,9 +296,8 @@ def csv(request,datasetPK):
     response['Content-Disposition'] = 'attachment; filename='+str(datasetPK)+".csv"
     return response
 
-def api(request):
+def api(request,templatePK):
     if request.method=="GET":
-        templatePK = request.GET.get("template",False)
         visualisation = get_object_or_404(Visualisation,pk=templatePK)
         chart_type = visualisation.chart_type
         
@@ -328,61 +327,50 @@ def api(request):
         response = HttpResponse("Please only POST to this URL.")
         return response
     
-def config(request):
+def config(request,templatePK):
     if request.method=="GET":
-        templatePKs = request.GET.get("template",False)
-        dataString = request.GET.get("data",False)
         fileFormat = request.GET.get("format",False)
         
-        configs = []
+        config = {}
         root = Element("config")
-            
-        for templatePK in templatePKs.split(","):        
-            visualisation = get_object_or_404(Visualisation,pk=templatePK)
-            chart_type = visualisation.chart_type
-            if dataString:
-                dataset = None
-                df = pd.read_json(dataString)
-                categorical = list(df.select_dtypes(include=['object']))
-                numerical = list(df.select_dtypes(exclude=['object']))
-            else:
-                dataset = visualisation.dataset
-                df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-                categorical = list(df.select_dtypes(include=['object']))
-                numerical = list(df.select_dtypes(exclude=['object']))
-            if chart_type == "column":
-                form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
-            if chart_type == "bar":
-                form = BarForm(instance=visualisation,x=categorical,y=numerical)
-            if chart_type == "donut":
-                form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-            if chart_type == "pie":
-                form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-            if chart_type == "stacked-column":
-                form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-            
-            config = {}
-            config['template'] = int(templatePK)
-            chart = SubElement(root,"chart")
-            child = SubElement(chart,"template")
-            child.text = str(templatePK)
-            for field in form:
-                val = field.value()
-                if val:
-                    if isinstance(val,decimal.Decimal):
-                        val = float(val)
-                    config[field.html_name] = val
-                    child = SubElement(chart,field.html_name)
-                    child.text = str(field.value())
-            configs.append(config)
+               
+        visualisation = get_object_or_404(Visualisation,pk=templatePK)
+        chart_type = visualisation.chart_type
+
+        dataset = visualisation.dataset
+        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
+        categorical = list(df.select_dtypes(include=['object']))
+        numerical = list(df.select_dtypes(exclude=['object']))
+        if chart_type == "column":
+            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "bar":
+            form = BarForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "donut":
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "pie":
+            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "stacked-column":
+            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
+
+        config['template'] = int(templatePK)
+        child = SubElement(root,"template")
+        child.text = str(templatePK)
+        for field in form:
+            val = field.value()
+            if val:
+                if isinstance(val,decimal.Decimal):
+                    val = float(val)
+                config[field.html_name] = val
+                child = SubElement(root,field.html_name)
+                child.text = str(field.value())
         
         if fileFormat=="json":
-            return HttpResponse(json.dumps(configs), content_type="application/json")
+            return HttpResponse(json.dumps(config), content_type="application/json")
         if fileFormat=="xml":
             return HttpResponse(tostring(root, encoding='utf8', method='xml'),content_type='text/xml')
-        return HttpResponse(json.dumps(configs), content_type="application/json")
+        return HttpResponse(json.dumps(config), content_type="application/json")
     else:
-        response = HttpResponse("Please only POST to this URL.")
+        response = HttpResponse("Please only GET to this URL.")
         return response
     
 def png(request,templatePK):
