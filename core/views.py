@@ -13,6 +13,7 @@ from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 from django.core.urlresolvers import reverse
 from utils import *
 from django.core.files.temp import NamedTemporaryFile
+import decimal
 
 def index(request):
     user = request.user
@@ -366,8 +367,11 @@ def config(request):
             child = SubElement(chart,"template")
             child.text = str(templatePK)
             for field in form:
-                if(field.value()):
-                    config[field.html_name] = field.value()
+                val = field.value()
+                if val:
+                    if isinstance(val,decimal.Decimal):
+                        val = float(val)
+                    config[field.html_name] = val
                     child = SubElement(chart,field.html_name)
                     child.text = str(field.value())
             configs.append(config)
