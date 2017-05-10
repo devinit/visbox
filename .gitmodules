@@ -1,0 +1,3 @@
+[submodule "core/static/core/js/charts"]
+	path = core/static/core/js/charts
+	url = https://github.com/devinit/charts.git
