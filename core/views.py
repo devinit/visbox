@@ -233,6 +233,30 @@ def createVis(request,chart,datasetPK):
             else:
                 form = LineForm(x=dataset.categorical,y=dataset.numerical)
             return render(request,'core/line/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
+    #stacked column charts
+    elif chart=="grouped_column":
+        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
+        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+        if request.method=="POST":
+            form = StackedColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            if form.is_valid():
+                visualisation = form.save(commit=False)
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.chart_type = 'grouped_column'
+                visualisation.dataset = dataset
+                visualisation.save()
+                return redirect('core.views.viewVis',chartPK=visualisation.pk)
+            else:
+                #Vis invalid
+                return render(request,'core/grouped_column/create.html', {"user":user,"dataset":dataset,"form":form})
+        else:
+            #GET request
+            chartPK = request.GET.get("copy",False)
+            if chartPK:
+                form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+            else:
+                form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
+            return render(request,'core/grouped_column/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
     else:
         return render_to_response('core/construction.html', {"user":user})
     
@@ -262,6 +286,9 @@ def viewVis(request,chartPK):
     if visualisation.chart_type == "line":
         form = LineForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
         return render(request,'core/line/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "grouped_column":
+        form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        return render(request,'core/grouped_column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
 
 @login_required
@@ -308,6 +335,12 @@ def editVis(request,chartPK):
             form.save()
             return redirect('core.views.viewVis',chartPK=visualisation.pk)
         return render(request,'core/line/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    if visualisation.chart_type == "grouped_column":
+        form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+        if form.is_valid():
+            form.save()
+            return redirect('core.views.viewVis',chartPK=visualisation.pk)
+        return render(request,'core/grouped_column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     return HttpResponse("This is where you would edit chart with primary key: "+str(chartPK))
 
 @login_required
@@ -357,6 +390,8 @@ def api(request,templatePK):
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "line":
             form = LineForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "grouped_column":
+            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
         return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
     else:
         response = HttpResponse("Please only POST to this URL.")
@@ -385,6 +420,8 @@ def config(request,templatePK):
         if chart_type == "pie":
             form = DonutForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "stacked_column":
+            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
+        if chart_type == "grouped_column":
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "line":
             form = LineForm(instance=visualisation,x=categorical,y=numerical)
