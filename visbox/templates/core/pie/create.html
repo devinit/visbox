@@ -8,18 +8,7 @@
     <style>
             
     button {display:block;}
-    
-  path.slice{
-      stroke-width:2px;
-      stroke: #fff;
-  }
-  
-  polyline{
-      opacity: 1;
-      stroke: #a9a6aa;
-      stroke-width: 2px;
-      fill: none;
-  }
+
     </style>
     {% endblock %}    
     {% block content %}
@@ -55,6 +44,11 @@ $('#visform').on('keyup keypress', function(e) {
   }
 });
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+    {% if copy %}
+      $.getJSON("{% url 'core.views.config' copy %}",function(config){
+        vb_pie("#pie_chart",config,csvDat)
+      });
+    {% endif %}
     function update() {
         vb_pie("#pie_chart",form2config("#visform"),csvDat);
     };
