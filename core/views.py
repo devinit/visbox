@@ -451,6 +451,7 @@ def png(request,templatePK):
     dataString = request.GET.get("data",False)
     filterSelection = request.GET.get("filter",False)
     base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
+    url = base_url
     if dataString:
         url = base_url+"?data="+dataString
     if filterSelection:
@@ -471,6 +472,7 @@ def svg(request,templatePK):
     dataString = request.GET.get("data",False)
     filterSelection = request.GET.get("filter",False)
     base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
+    url = base_url
     if dataString:
         url = base_url+"?data="+dataString
     if filterSelection:
