@@ -368,6 +368,7 @@ def api(request,templatePK):
         chart_type = visualisation.chart_type
         
         dataString = request.GET.get("data",False)
+        filterSelection = request.GET.get("filter",False)
         if dataString:
             dataset = None
             df = pd.read_json(dataString)
@@ -392,9 +393,9 @@ def api(request,templatePK):
             form = LineForm(instance=visualisation,x=categorical,y=numerical)
         if chart_type == "grouped_column":
             form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
+        return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"filter":filterSelection,"visualisation":visualisation,"dataString":dataString})
     else:
-        response = HttpResponse("Please only POST to this URL.")
+        response = HttpResponse("Please only GET to this URL.")
         return response
     
 def config(request,templatePK):
@@ -448,10 +449,15 @@ def config(request,templatePK):
 def png(request,templatePK):
     visualisation = get_object_or_404(Visualisation,pk=templatePK)
     dataString = request.GET.get("data",False)
+    filterSelection = request.GET.get("filter",False)
+    base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
     if dataString:
-        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})+"?data="+dataString
-    else:
-        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
+        url = base_url+"?data="+dataString
+    if filterSelection:
+        url = base_url+"?filter="+filterSelection
+    if dataString and filterSelection:
+        url = base_url+"?data="+dataString+"&filter="+filterSelection
+        
 
     newPNG = NamedTemporaryFile(suffix='.png')
     chromePNG(url,newPNG.name)
@@ -463,10 +469,14 @@ def png(request,templatePK):
 def svg(request,templatePK):
     visualisation = get_object_or_404(Visualisation,pk=templatePK)
     dataString = request.GET.get("data",False)
+    filterSelection = request.GET.get("filter",False)
+    base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
     if dataString:
-        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})+"?data="+dataString
-    else:
-        url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
+        url = base_url+"?data="+dataString
+    if filterSelection:
+        url = base_url+"?filter="+filterSelection
+    if dataString and filterSelection:
+        url = base_url+"?data="+dataString+"&filter="+filterSelection
 
     source_code = chromeSVG(url)
     response = HttpResponse(source_code,content_type="image/svg+xml")

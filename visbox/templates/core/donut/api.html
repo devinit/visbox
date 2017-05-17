@@ -14,6 +14,9 @@
     </div>
     <script>
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        {% if filter %}
+        config['filter_selection'] = "{{filter}}";
+        {% endif %}
         {% if dataset %}
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             vb_donut("#donut_chart",config,csvDat);

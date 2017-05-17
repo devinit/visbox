@@ -11,6 +11,7 @@ def chromePNG(url,tmpf):
     options.add_argument('headless')
     options.add_argument('window-size=2000x2000')
     options.add_argument("start-maximized")
+    options.add_argument("no-sandbox")
     
     driver = webdriver.Chrome(executable_path='/src/chromedriver_linux64/chromedriver',chrome_options=options)
     driver.get(url)
@@ -42,6 +43,7 @@ def chromeSVG(url):
     options.add_argument('headless')
     options.add_argument('disable-gpu')
     options.add_argument('window-size=1200x1200')
+    options.add_argument("no-sandbox")
     
     driver = webdriver.Chrome(executable_path='/src/chromedriver_linux64/chromedriver',chrome_options=options)
     driver.get(url)
