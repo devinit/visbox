@@ -11,6 +11,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ".:/src"
+    cap_add:
+      - SYS_ADMIN
+    privileged: true
     ports:
       - "80:80"
     depends_on:
