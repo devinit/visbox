@@ -56,6 +56,8 @@ class Visualisation(models.Model):
     filter_by = models.CharField(default="None",max_length=255)
     filter_selection = models.CharField(null=True,blank=True,max_length=255)
     legend_position = models.CharField(default='tr',max_length=2)
+    bubble_minimum = models.IntegerField(default=0)
+    bubble_maximum = models.IntegerField(default=20)
     
     def __unicode__(self):
         return u'%s' % self.title

@@ -186,3 +186,43 @@ class LineForm(ModelForm):
         self.fields['x_label'].strip = False
         self.fields['y_label'].strip = False
         
+class BubbleForm(ModelForm):
+    class Meta:
+        model = Visualisation
+        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
+                  'x_indicator','y_indicator','z_indicator','c_indicator','sort','y_maximum','y_maximum_value','bubble_minimum','bubble_maximum'
+                  ,'unit_divisor','filter_by','filter_selection','colour','x_label'
+                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','save_as_template')
+        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
+        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
+        LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
+        widgets = {
+            'dataset':forms.HiddenInput(),
+            'sort':forms.RadioSelect(choices=SORT_CHOICES),
+            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
+            'filter_selection':forms.Select(),
+            'legend_position':forms.RadioSelect(choices=LEGEND_POS_CHOICES),
+        }
+    def __init__(self, *args, **kwargs):
+        x = kwargs.pop('x')
+        y = kwargs.pop('y')
+        super(BubbleForm, self).__init__(*args, **kwargs)
+        self.fields['x_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in x+y]
+        )
+        self.fields['y_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in y+x]
+        )
+        self.fields['z_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in ['None']+y+x]
+        )
+        self.fields['c_indicator'].widget = forms.Select(
+            choices=[(var, var) for var in ['None']+x+y]
+        )
+        self.fields['filter_by'].widget = forms.Select(
+            choices=[(var,var) for var in ['None']+x+y]
+        )
+        self.fields['dataset'].required = False
+        self.fields['x_label'].strip = False
+        self.fields['y_label'].strip = False
+        
