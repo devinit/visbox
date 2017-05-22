@@ -58,6 +58,7 @@ class Visualisation(models.Model):
     legend_position = models.CharField(default='tr',max_length=2)
     bubble_minimum = models.IntegerField(default=0)
     bubble_maximum = models.IntegerField(default=20)
+    inject_css = models.TextField(null=True,blank=True)
     
     def __unicode__(self):
         return u'%s' % self.title

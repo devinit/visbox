@@ -36,7 +36,7 @@ class ColumnForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','sort','y_maximum','y_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','save_as_template')
+                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
         widgets = {
@@ -44,6 +44,7 @@ class ColumnForm(ModelForm):
             'sort':forms.RadioSelect(choices=SORT_CHOICES),
             'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
             'filter_selection':forms.Select(),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
@@ -67,7 +68,7 @@ class BarForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','sort','x_maximum','x_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','x_text_rotation','labels_on_chart','label_font_size','label_format','save_as_template')
+                  ,'y_label','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         X_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
         widgets = {
@@ -75,6 +76,7 @@ class BarForm(ModelForm):
             'sort':forms.RadioSelect(choices=SORT_CHOICES),
             'x_maximum':forms.RadioSelect(choices=X_AUTO_CHOICES),
             'filter_selection':forms.Select(),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
@@ -98,7 +100,7 @@ class StackedColumnForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','group_by','sort','y_maximum','y_maximum_value','unit_divisor','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','save_as_template')
+                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','inject_css','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
         LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
@@ -108,6 +110,7 @@ class StackedColumnForm(ModelForm):
             'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
             'filter_selection':forms.Select(),
             'legend_position':forms.RadioSelect(choices=LEGEND_POS_CHOICES),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
@@ -133,12 +136,13 @@ class DonutForm(ModelForm):
     class Meta:
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','sort','filter_by','filter_selection','colour','label_font_size','label_format','save_as_template')
+                  'x_indicator','y_indicator','sort','filter_by','filter_selection','colour','label_font_size','label_format','inject_css','save_as_template')
         SORT_CHOICES = [('native','Native ordering'),('avoid','Avoid text collisions'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         widgets = {
             'dataset':forms.HiddenInput(),
             'sort':forms.RadioSelect(choices=SORT_CHOICES),
             'filter_selection':forms.Select(),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
@@ -160,7 +164,7 @@ class LineForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','sort','y_maximum','y_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','save_as_template')
+                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
         widgets = {
@@ -168,6 +172,7 @@ class LineForm(ModelForm):
             'sort':forms.RadioSelect(choices=SORT_CHOICES),
             'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
             'filter_selection':forms.Select(),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
@@ -192,7 +197,7 @@ class BubbleForm(ModelForm):
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','z_indicator','c_indicator','sort','y_maximum','y_maximum_value','bubble_minimum','bubble_maximum'
                   ,'unit_divisor','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','save_as_template')
+                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','inject_css','save_as_template')
         SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
         Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
         LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
@@ -202,6 +207,7 @@ class BubbleForm(ModelForm):
             'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
             'filter_selection':forms.Select(),
             'legend_position':forms.RadioSelect(choices=LEGEND_POS_CHOICES),
+            'inject_css':forms.TextInput(),
         }
     def __init__(self, *args, **kwargs):
         x = kwargs.pop('x')
