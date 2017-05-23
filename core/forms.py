@@ -237,7 +237,7 @@ class TreeForm(ModelForm):
         model = Visualisation
         fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
                   'x_indicator','y_indicator','c_indicator','sort','unit_divisor','filter_by','filter_selection','colour','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('native','Native ordering'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
+        SORT_CHOICES = [('native','Native ordering'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending'),('casc','C ascending'),('cdes','C descending')]
         widgets = {
             'dataset':forms.HiddenInput(),
             'sort':forms.RadioSelect(choices=SORT_CHOICES),
