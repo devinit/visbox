@@ -24,6 +24,7 @@ class Dataset(models.Model):
     
 class Visualisation(models.Model):
     title = models.CharField(null=True,blank=True,max_length=255)
+    chart_type = models.CharField(max_length=255)
     dataset = models.ForeignKey(Dataset)
     creator = models.ForeignKey(User, editable=False)
     created = models.DateTimeField(auto_now_add=True)

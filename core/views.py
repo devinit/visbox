@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse
 from utils import *
 from django.core.files.temp import NamedTemporaryFile
 import decimal
+from django.conf import settings
 
 def index(request):
     user = request.user
@@ -87,18 +88,20 @@ def deleteDataset(request,datasetPK):
 @login_required
 def createVis(request,chart,datasetPK):
     user = request.user
+    
+    schema_file = open(settings.STATIC_ROOT+'/core/js/charts/test_schema.json')   
+    schemas = json.load(schema_file)         
+    schema_file.close()
+    
     dataset = get_object_or_404(Dataset,pk=datasetPK)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    #Column charts
-    if chart=="column":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
+    dataset.variables = list(dataset.df)
+    if chart in schemas:
         if request.method=="POST":
-            form = ColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
+            form = VisForm(request.POST,schema=schemas[chart],variables=dataset.variables)
             if form.is_valid():
                 visualisation = form.save(commit=False)
                 visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'column'
                 visualisation.dataset = dataset
                 visualisation.save()
                 return redirect('core.views.viewVis',chartPK=visualisation.pk)
@@ -109,226 +112,10 @@ def createVis(request,chart,datasetPK):
             #GET request
             chartPK = request.GET.get("copy",False)
             if chartPK:
-                form = ColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
+                form = VisForm(instance=Visualisation.objects.get(pk=chartPK),schema=schemas[chart],variables=dataset.variables)
             else:
-                form = ColumnForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/column/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #Bar charts
-    elif chart=="bar":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = BarForm(request.POST,x=dataset.numerical,y=dataset.categorical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'bar'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = BarForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.numerical,y=dataset.categorical)
-            else:
-                form = BarForm(x=dataset.numerical,y=dataset.categorical)
-            return render(request,'core/bar/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #stacked column charts
-    elif chart=="stacked_column":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = StackedColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'stacked_column'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/stacked_column/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/stacked_column/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #donut charts
-    elif chart=="donut":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = DonutForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'donut'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/donut/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = DonutForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = DonutForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/donut/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #pie charts
-    elif chart=="pie":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = DonutForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'pie'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/pie/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = DonutForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = DonutForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/pie/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #Line charts
-    elif chart=="line":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = LineForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'line'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/line/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = LineForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = LineForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/line/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #grouped column charts
-    elif chart=="grouped_column":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = StackedColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'grouped_column'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/grouped_column/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/grouped_column/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #bubble charts
-    elif chart=="bubble":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = BubbleForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'bubble'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/bubble/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = BubbleForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = BubbleForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/bubble/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #area charts
-    elif chart=="area":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = StackedColumnForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'area'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/area/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = StackedColumnForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = StackedColumnForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/area/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
-    #tree charts
-    elif chart=="tree":
-        dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-        dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-        if request.method=="POST":
-            form = TreeForm(request.POST,x=dataset.categorical,y=dataset.numerical)
-            if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
-                visualisation.chart_type = 'tree'
-                visualisation.dataset = dataset
-                visualisation.save()
-                return redirect('core.views.viewVis',chartPK=visualisation.pk)
-            else:
-                #Vis invalid
-                return render(request,'core/tree/create.html', {"user":user,"dataset":dataset,"form":form})
-        else:
-            #GET request
-            chartPK = request.GET.get("copy",False)
-            if chartPK:
-                form = TreeForm(instance=Visualisation.objects.get(pk=chartPK),x=dataset.categorical,y=dataset.numerical)
-            else:
-                form = TreeForm(x=dataset.categorical,y=dataset.numerical)
-            return render(request,'core/tree/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
+                form = VisForm(schema=schemas[chart],variables=dataset.variables)
+            return render(request,'core/chart/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
     else:
         return render_to_response('core/construction.html', {"user":user})
     

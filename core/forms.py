@@ -27,12 +27,6 @@ class UploadForm(ModelForm):
         }
         
 class VisForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ['dataset']
-        widgets = {
-            'dataset':forms.HiddenInput()
-        }
 
     def __init__(self, *args, **kwargs):
         schema = kwargs.pop('schema')
@@ -43,29 +37,31 @@ class VisForm(ModelForm):
             fieldName = key
             fieldType = field['type']
             if fieldType=="string":
-                self.fields[fieldName] = forms.CharField(fieldName)
+                self.fields[fieldName] = forms.CharField()
                 self.fields[fieldName].strip = False
             if fieldType=="integer":
-                self.fields[fieldName] = forms.FloatField(fieldName)
+                self.fields[fieldName] = forms.IntegerField()
             if fieldType=="float":
-                self.fields[fieldName] = forms.IntegerField(fieldName)
+                self.fields[fieldName] = forms.FloatField()
             if fieldType=="select":
                 fieldChoices = field['choices']
-                self.fields[fieldName] = forms.Select(
-                    fieldName
-                    ,choices=[(var, var) for var in fieldChoices]
+                self.fields[fieldName] = forms.ChoiceField(
+                    widget = forms.Select()
+                    ,choices=[(var[0], var[1]) for var in fieldChoices]
                 )
             if fieldType=="radio":
                 fieldChoices = field['choices']
-                self.fields[fieldName] = forms.RadioSelect(
-                    fieldName
-                    ,choices=[(var, var) for var in fieldChoices]
+                self.fields[fieldName] = forms.ChoiceField(
+                    widget = forms.RadioSelect()
+                    ,choices=[(var[0], var[1]) for var in fieldChoices]
                 )
             if fieldType=="indicator":
-                self.fields[fieldName] = forms.Select(
-                    fieldName
+                self.fields[fieldName] = forms.ChoiceField(
+                    widget = forms.Select()
                     ,choices=[(var, var) for var in variables]
                 )
+            if fieldType=="boolean":
+                self.fields[fieldName] = forms.BooleanField()
             try:
                 fieldRequired = field['required']
             except KeyError:
@@ -78,4 +74,11 @@ class VisForm(ModelForm):
                 pass
             self.Meta.fields.append(fieldName)
         self.fields['dataset'].required = False
+        
+    class Meta:
+        model = Visualisation
+        fields = ['dataset',]
+        widgets = {
+            'dataset':forms.HiddenInput()
+        }
         

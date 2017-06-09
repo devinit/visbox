@@ -134,42 +134,117 @@
 
 
 		//fetch('./subnational_total.topojson.json').then(function(response){
-		fetch('./subnational.json').then(function(response){
+//		fetch('./subnational.json').then(function(response){
+//			return response.json();
+//		}).then(function(json){
+//            data = json
+//
+//			var vtls = {};
+//            var layerName = Object.keys(json.objects)[0];
+//            vtls[layerName] = function(properties, zoom) {
+//            //console.log(properties);
+//                var p = properties.P20;
+//                return {
+//                    fillColor: p==0 ? 'rgb(186,186,186)' :
+//                            (p > 0 && p < 0.2 ) ? 'rgb(247,206,213)' :
+//                            (p >= 0.2 && p < 0.4) ? 'rgb(235,167,180)' :
+//                            (p >= 0.4 && p < 0.6) ? 'rgb(223,128,147)' :
+//                            (p >= 0.6 && p < 0.8) ? 'rgb(186,12,47)' :
+//                            (p >= 0.8 && p <= 1.0) ? 'rgb(141,9,35)' : 'rgb(186,186,186)',
+//                    //fillOpacity: 0.5,
+//                    fillOpacity: 1,
+//                    stroke: true,
+//                    fill: true,
+//                    color: 'white',
+//                        //opacity: 0.2,
+//                    weight: 1,
+//                }
+//            };
+//            var vectorGrid = L.vectorGrid.slicer( json, {
+//				rendererFactory: L.canvas.tile,
+//				vectorTileLayerStyles: vtls
+//			}).addTo(map);
+//
+//		});
+		fetch('./cluster_data_trunc.json').then(function(response){
 			return response.json();
 		}).then(function(json){
             data = json
-			//console.log(json);
 
-			var vtls = {};
-            var layerName = Object.keys(json.objects)[0];
-            vtls[layerName] = function(properties, zoom) {
-            //console.log(properties);
-                var p = properties.P20;
-                return {
-                    fillColor: p==0 ? 'rgb(186,186,186)' :
-                            (p > 0 && p < 0.2 ) ? 'rgb(247,206,213)' :
+			L.geoJson(data, {
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup("<b>Cluster:</b> "+feature.properties.dhsreg+"<br>"+"<b>P20:</b> "+feature.properties.p20);
+				},
+
+				/*
+				 * When each feature is loaded from the GeoJSON this
+				 * function is called. Here we create a cicle marker
+				 * for the feature and style the circle marker.
+				 */
+				pointToLayer: function (feature, latlng) {
+					var p = feature.properties.p20;
+					return L.circleMarker(latlng, {
+						// Stroke properties
+						color: 'black',
+						opacity: 0.75,
+						weight: 1,
+
+						// Fill properties
+						fillColor: (p >= 0 && p < 0.2 ) ? 'rgb(247,206,213)' :
                             (p >= 0.2 && p < 0.4) ? 'rgb(235,167,180)' :
                             (p >= 0.4 && p < 0.6) ? 'rgb(223,128,147)' :
                             (p >= 0.6 && p < 0.8) ? 'rgb(186,12,47)' :
-                            (p >= 0.8 && p < 1.0) ? 'rgb(141,9,35)' : 'rgb(186,186,186)',
-                    //fillOpacity: 0.5,
-                    fillOpacity: 1,
-                    stroke: true,
-                    fill: true,
-                    color: 'white',
-                        //opacity: 0.2,
-                    weight: 1,
-                }
-            };
-            var vectorGrid = L.vectorGrid.slicer( json, {
-				rendererFactory: L.canvas.tile,
-				vectorTileLayerStyles: vtls
+                            (p >= 0.8 && p <= 1.0) ? 'rgb(141,9,35)' : 'rgb(186,186,186)',
+						fillOpacity: 1,
+
+						radius: 4
+					});
+				}
 			}).addTo(map);
 
-			map.setView({ lat: 0, lng: 0 }, 3);
-
 		});
+//		fetch('./cluster_data_trunc.json').then(function(response){
+//			return response.json();
+//		}).then(function(json){
+//            data = json
+//			
+//			var vectorTileOptions = {
+//				rendererFactory: L.canvas.tile,
+//				vectorTileLayerStyles: {
+//					'sliced': function(properties, zoom) {
+//						console.log(properties,zoom);
+//						return {
+//							weight: 2,
+//							color: 'red',
+//							opacity: 1,
+//							fillColor: 'yellow',
+//							fill: true,
+//							radius: 6,
+//							fillOpacity: 0.7
+//						};
+//					},
+//				},
+//				interactive: true	// Make sure that this VectorGrid fires mouse/pointer events
+//				//getFeatureId: function(f) {
+//				//	return f.properties.osm_id;
+//				//}
+//			};
+//
+//
+//		var pbfLayer = L.vectorGrid.slicer(data, vectorTileOptions)
+//			//.on('click', function(e) {	// The .on method attaches an event handler
+//			//	L.popup()
+//			//		.setContent(e.layer.properties.dhsreg)
+//			//		.setLatLng(e.latlng)
+//			//		.openOn(map);
+//			//
+//			//	L.DomEvent.stop(e);
+//			//})
+//			.addTo(map);
+//
+//		});
 
+		map.setView({ lat: 0, lng: 0 }, 3);
 
 	</script>
 </body>

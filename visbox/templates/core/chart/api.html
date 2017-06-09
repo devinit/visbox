@@ -1,0 +1,31 @@
+<html>
+    <head>
+    <title>Bar chart</title>
+     {% load staticfiles %}    
+    <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
+    <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/charts/bar.js' %}'></script>
+    </head>
+    <body>
+    <div style="float:left;width:100%">
+        <svg id="bar_chart"></svg>
+    </div>
+    <script>
+    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
+        {% if filter %}
+        config['filter_selection'] = "{{filter}}";
+        {% endif %}
+        {% if dataset %}
+        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+            vb_bar("#bar_chart",config,csvDat);
+        });
+        {% else %}
+        var csvDat = JSON.parse('{{dataString|safe}}');
+        vb_bar("#bar_chart",config,csvDat);
+        {% endif %}
+    });
+    </script>
+    </body>
+</html>
