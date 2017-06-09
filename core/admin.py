@@ -31,7 +31,7 @@ class DatasetAdmin(admin.ModelAdmin):
     
 class VisualisationAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['dataset','chart_type','creator','created']
+    list_display = ['title','dataset','creator','created']
     #enable the save buttons on top of change form
     save_on_top = True
 

@@ -42,10 +42,6 @@ class VisForm(ModelForm):
             field = schema['properties'][key]
             fieldName = key
             fieldType = field['type']
-            try:
-                fieldRequired = field['required']
-            except KeyError:
-                fieldRequired = True
             if fieldType=="string":
                 self.fields[fieldName] = forms.CharField(fieldName)
                 self.fields[fieldName].strip = False
@@ -70,7 +66,16 @@ class VisForm(ModelForm):
                     fieldName
                     ,choices=[(var, var) for var in variables]
                 )
+            try:
+                fieldRequired = field['required']
+            except KeyError:
+                fieldRequired = True
             self.fields[fieldName].required = fieldRequired
+            try:
+                fieldInitial = field['default']
+                self.fields[fieldName].initial = fieldInitial
+            except KeyError:
+                pass
             self.Meta.fields.append(fieldName)
         self.fields['dataset'].required = False
         

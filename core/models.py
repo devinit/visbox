@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 
 
 class Dataset(models.Model):
@@ -23,42 +24,11 @@ class Dataset(models.Model):
     
 class Visualisation(models.Model):
     title = models.CharField(null=True,blank=True,max_length=255)
-    chart_type = models.CharField(max_length=255)
     dataset = models.ForeignKey(Dataset)
     creator = models.ForeignKey(User, editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    width = models.IntegerField(default=960)
-    height = models.IntegerField(default=500)
-    padding_top = models.IntegerField(default=20)
-    padding_right = models.IntegerField(default=100)
-    padding_bottom = models.IntegerField(default=100)
-    padding_left = models.IntegerField(default=100)
-    x_indicator = models.CharField(null=True,blank=True,max_length=255)
-    y_indicator = models.CharField(null=True,blank=True,max_length=255)
-    z_indicator = models.CharField(null=True,blank=True,max_length=255)
-    c_indicator = models.CharField(null=True,blank=True,max_length=255)
-    group_by = models.CharField(null=True,blank=True,max_length=255)
-    sort = models.CharField(null=True,blank=True,max_length=255)
-    y_maximum = models.CharField(null=True,blank=True,max_length=255,default="auto")
-    y_maximum_value = models.DecimalField(null=True,blank=True,max_digits=99,decimal_places=5)
-    x_maximum = models.CharField(null=True,blank=True,max_length=255,default="auto")
-    x_maximum_value = models.DecimalField(null=True,blank=True,max_digits=99,decimal_places=5)
-    colour = models.CharField(null=True,blank=True,max_length=255,default="#e84439")
-    x_label = models.CharField(null=True,blank=True,max_length=255)
-    y_label = models.CharField(null=True,blank=True,max_length=255)
-    y_axis_ticks = models.IntegerField(null=True,blank=True)
-    x_text_rotation = models.IntegerField(default=45)
+    configuration = JSONField(blank=True,null=True)
     save_as_template = models.BooleanField(default=False)
-    labels_on_chart = models.BooleanField(default=False)
-    label_font_size = models.IntegerField(default=10)
-    label_format = models.CharField(default=",.2f",max_length=255)
-    unit_divisor = models.IntegerField(default=1)
-    filter_by = models.CharField(default="None",max_length=255)
-    filter_selection = models.CharField(null=True,blank=True,max_length=255)
-    legend_position = models.CharField(default='tr',max_length=2)
-    bubble_minimum = models.IntegerField(default=0)
-    bubble_maximum = models.IntegerField(default=20)
-    inject_css = models.TextField(null=True,blank=True)
     
     def __unicode__(self):
         return u'%s' % self.title
@@ -72,6 +42,6 @@ class Visualisation(models.Model):
     def save(self, *args, **kwargs):
         super(Visualisation, self).save(*args, **kwargs)
         if self.title is None or self.title == "":
-            self.title = self.chart_type + " " + str(self.pk)
+            self.title = str(self.pk)
         super(Visualisation, self).save(*args, **kwargs)
 
