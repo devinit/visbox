@@ -29,236 +29,42 @@ class UploadForm(ModelForm):
 class VisForm(ModelForm):
     class Meta:
         model = Visualisation
-        exclude = ['creator','dataset']
-        
-class ColumnForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','sort','y_maximum','y_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
-            'filter_selection':forms.Select(),
-            'inject_css':forms.TextInput(),
-        }
+        fields = ['dataset']
+
     def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(ColumnForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        self.fields['x_label'].strip = False
-        self.fields['y_label'].strip = False
-        
-class BarForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','sort','x_maximum','x_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        X_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'x_maximum':forms.RadioSelect(choices=X_AUTO_CHOICES),
-            'filter_selection':forms.Select(),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(BarForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        self.fields['x_label'].strip = False
-        self.fields['y_label'].strip = False
-        
-class StackedColumnForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','group_by','sort','y_maximum','y_maximum_value','unit_divisor','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','inject_css','save_as_template')
-        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
-            'filter_selection':forms.Select(),
-            'legend_position':forms.RadioSelect(choices=LEGEND_POS_CHOICES),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(StackedColumnForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['group_by'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        self.fields['x_label'].strip = False
-        self.fields['y_label'].strip = False
-        
-class DonutForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','sort','filter_by','filter_selection','colour','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('native','Native ordering'),('avoid','Avoid text collisions'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'filter_selection':forms.Select(),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(DonutForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        
-class LineForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','sort','y_maximum','y_maximum_value','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
-            'filter_selection':forms.Select(),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(LineForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        self.fields['x_label'].strip = False
-        self.fields['y_label'].strip = False
-        
-class BubbleForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','z_indicator','c_indicator','sort','y_maximum','y_maximum_value','bubble_minimum','bubble_maximum'
-                  ,'unit_divisor','filter_by','filter_selection','colour','x_label'
-                  ,'y_label','y_axis_ticks','x_text_rotation','labels_on_chart','label_font_size','label_format','legend_position','inject_css','save_as_template')
-        SORT_CHOICES = [('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending')]
-        Y_AUTO_CHOICES = [('auto','Automatic'),('manual','Manual (define below)')]
-        LEGEND_POS_CHOICES = [('tr','Top right'),('tl','Top left'),('cr','Center right')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'y_maximum':forms.RadioSelect(choices=Y_AUTO_CHOICES),
-            'filter_selection':forms.Select(),
-            'legend_position':forms.RadioSelect(choices=LEGEND_POS_CHOICES),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(BubbleForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['z_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in ['None']+y+x]
-        )
-        self.fields['c_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in ['None']+x+y]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
-        self.fields['dataset'].required = False
-        self.fields['x_label'].strip = False
-        self.fields['y_label'].strip = False
-        
-class TreeForm(ModelForm):
-    class Meta:
-        model = Visualisation
-        fields = ('title','dataset','width','height','padding_top','padding_right','padding_bottom','padding_left',
-                  'x_indicator','y_indicator','c_indicator','sort','unit_divisor','filter_by','filter_selection','colour','label_font_size','label_format','inject_css','save_as_template')
-        SORT_CHOICES = [('native','Native ordering'),('yasc','Y ascending'),('ydes','Y descending'),('xasc','X ascending'),('xdes','X descending'),('casc','C ascending'),('cdes','C descending')]
-        widgets = {
-            'dataset':forms.HiddenInput(),
-            'sort':forms.RadioSelect(choices=SORT_CHOICES),
-            'filter_selection':forms.Select(),
-            'inject_css':forms.TextInput(),
-        }
-    def __init__(self, *args, **kwargs):
-        x = kwargs.pop('x')
-        y = kwargs.pop('y')
-        super(TreeForm, self).__init__(*args, **kwargs)
-        self.fields['x_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in x+y]
-        )
-        self.fields['y_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in y+x]
-        )
-        self.fields['c_indicator'].widget = forms.Select(
-            choices=[(var, var) for var in ['None']+x+y]
-        )
-        self.fields['filter_by'].widget = forms.Select(
-            choices=[(var,var) for var in ['None']+x+y]
-        )
+        schema = kwargs.pop('schema')
+        variables = kwargs.pop('variables')
+        super(VisForm, self).__init__(*args, **kwargs)
+        fields = []
+        choiceDict = {}
+        for vis in schema:
+            for field in vis['properties']:
+                fieldName = field['name']
+                fieldType = field['type']
+                if fieldType=="string":
+                    self.fields[fieldName] = forms.CharField(fieldName)
+                    self.fields[fieldName].strip = False
+                if fieldType=="integer":
+                    self.fields[fieldName] = forms.FloatField(fieldName)
+                if fieldType=="float":
+                    self.fields[fieldName] = forms.IntegerField(fieldName)
+                if fieldType=="select":
+                    fieldChoices = field['choices']
+                    self.fields[fieldName] = forms.Select(
+                        fieldName
+                        ,choices=[(var, var) for var in fieldChoices]
+                    )
+                if fieldType=="radio":
+                    fieldChoices = field['choices']
+                    self.fields[fieldName] = forms.RadioSelect(
+                        fieldName
+                        ,choices=[(var, var) for var in fieldChoices]
+                    )
+                if fieldType=="indicator":
+                    self.fields[fieldName] = forms.Select(
+                        fieldName
+                        ,choices=[(var, var) for var in variables]
+                    )
+                self.Meta.fields.append(fieldName)
         self.fields['dataset'].required = False
         
