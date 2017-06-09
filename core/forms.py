@@ -30,39 +30,47 @@ class VisForm(ModelForm):
     class Meta:
         model = Visualisation
         fields = ['dataset']
+        widgets = {
+            'dataset':forms.HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         schema = kwargs.pop('schema')
         variables = kwargs.pop('variables')
         super(VisForm, self).__init__(*args, **kwargs)
-        for vis in schema:
-            for field in vis['properties']:
-                fieldName = field['name']
-                fieldType = field['type']
-                if fieldType=="string":
-                    self.fields[fieldName] = forms.CharField(fieldName)
-                    self.fields[fieldName].strip = False
-                if fieldType=="integer":
-                    self.fields[fieldName] = forms.FloatField(fieldName)
-                if fieldType=="float":
-                    self.fields[fieldName] = forms.IntegerField(fieldName)
-                if fieldType=="select":
-                    fieldChoices = field['choices']
-                    self.fields[fieldName] = forms.Select(
-                        fieldName
-                        ,choices=[(var, var) for var in fieldChoices]
-                    )
-                if fieldType=="radio":
-                    fieldChoices = field['choices']
-                    self.fields[fieldName] = forms.RadioSelect(
-                        fieldName
-                        ,choices=[(var, var) for var in fieldChoices]
-                    )
-                if fieldType=="indicator":
-                    self.fields[fieldName] = forms.Select(
-                        fieldName
-                        ,choices=[(var, var) for var in variables]
-                    )
-                self.Meta.fields.append(fieldName)
+        for key in schema['properties']:
+            field = schema['properties'][key]
+            fieldName = key
+            fieldType = field['type']
+            try:
+                fieldRequired = field['required']
+            except KeyError:
+                fieldRequired = True
+            if fieldType=="string":
+                self.fields[fieldName] = forms.CharField(fieldName)
+                self.fields[fieldName].strip = False
+            if fieldType=="integer":
+                self.fields[fieldName] = forms.FloatField(fieldName)
+            if fieldType=="float":
+                self.fields[fieldName] = forms.IntegerField(fieldName)
+            if fieldType=="select":
+                fieldChoices = field['choices']
+                self.fields[fieldName] = forms.Select(
+                    fieldName
+                    ,choices=[(var, var) for var in fieldChoices]
+                )
+            if fieldType=="radio":
+                fieldChoices = field['choices']
+                self.fields[fieldName] = forms.RadioSelect(
+                    fieldName
+                    ,choices=[(var, var) for var in fieldChoices]
+                )
+            if fieldType=="indicator":
+                self.fields[fieldName] = forms.Select(
+                    fieldName
+                    ,choices=[(var, var) for var in variables]
+                )
+            self.fields[fieldName].required = fieldRequired
+            self.Meta.fields.append(fieldName)
         self.fields['dataset'].required = False
         
