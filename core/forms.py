@@ -35,8 +35,6 @@ class VisForm(ModelForm):
         schema = kwargs.pop('schema')
         variables = kwargs.pop('variables')
         super(VisForm, self).__init__(*args, **kwargs)
-        fields = []
-        choiceDict = {}
         for vis in schema:
             for field in vis['properties']:
                 fieldName = field['name']
