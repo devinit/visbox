@@ -4,6 +4,8 @@
     {% block head %}
     {% load staticfiles %}    
     <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/di-charts-1.1.1.min.js' %}'></script>
+    <link rel="stylesheet" href='{% static 'core/js/di-charts-1.1.1.css' %}'>
     <style>
 
     button {display:block;margin:10px;}
@@ -47,14 +49,12 @@
       <button id="edit" onclick="goToDeletePage()">Delete</button>
       {% endif %}
     </div>
-    <div style="float:left;width:80%">
-      <svg id="chart"></svg> 
+    <div style="float:left;width:80%" id="chart">
     </div>
     <script>
-    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
-            vb_bar("#bar_chart",config,csvDat);
+            var config = JSON.parse('{{visualisation.get_config|safe}}');
+            DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
         });
-    });
     </script>
     {% endblock %}

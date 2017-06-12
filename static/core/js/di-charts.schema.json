@@ -243,15 +243,6 @@
             "key": "config.linearAxis.showAxisLabel"
           },
           {
-            "name": "axisOrientation",
-            "options": [
-              "vertical",
-              "horizontal"
-            ],
-            "description": "Orientation",
-            "key": "config.linearAxis.axisOrientation"
-          },
-          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -293,12 +284,6 @@
             "type": "boolean",
             "description": "Show Label",
             "key": "config.categoryAxis.showAxisLabel"
-          },
-          {
-            "name": "axisOrientation",
-            "type": "string",
-            "description": "Orientation",
-            "key": "config.categoryAxis.axisOrientation"
           },
           {
             "name": "axisLabel",

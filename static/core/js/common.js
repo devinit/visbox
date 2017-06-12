@@ -23,21 +23,23 @@ function nest_config(config){
   for(var key in config){
     var value = config[key],
     path = key.split(".");
-    if(path[0]=="config"){
-      if(result.hasOwnProperty(path[1])){
-        if(path.length==2){
-          result[path[1]]["value"] = value;
+    if(value !=""){
+      if(path[0]=="config"){
+        if(result.hasOwnProperty(path[1])){
+          if(path.length==2){
+            result[path[1]]["value"] = value;
+          }else{
+            result[path[1]][path[2]] = value;
+          }
         }else{
-          result[path[1]][path[2]] = value;
+          if(path.length==2){
+            result[path[1]] = value;
+          }else{
+            result[path[1]] = {};
+            result[path[1]][path[2]] = value;
+          }
         }
-      }else{
-        if(path.length==2){
-          result[path[1]] = value;
-        }else{
-          result[path[1]] = {};
-          result[path[1]][path[2]] = value;
-        }
-      }
+      } 
     }
   }
   return(result);

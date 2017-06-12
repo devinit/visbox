@@ -6,25 +6,22 @@
     <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/di-charts-1.1.1.min.js' %}'></script>
+    <link rel="stylesheet" href='{% static 'core/js/di-charts-1.1.1.css' %}'>
     </head>
     <body>
-    <div style="float:left;width:100%">
-        <svg id="chart"></svg>
+    <div style="float:left;width:100%" id="chart">
     </div>
     <script>
-    $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
-        {% if filter %}
-        config['filter_selection'] = "{{filter}}";
-        {% endif %}
-        {% if dataset %}
-        d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
-            vb_bar("#bar_chart",config,csvDat);
-        });
-        {% else %}
-        var csvDat = JSON.parse('{{dataString|safe}}');
-        vb_bar("#bar_chart",config,csvDat);
-        {% endif %}
+    {% if dataset %}
+    var config = JSON.parse('{{visualisation.get_config|safe}}');
+    d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
+         DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
     });
+    {% else %}
+    var csvDat = JSON.parse('{{dataString|safe}}');
+     DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+    {% endif %}
     </script>
     </body>
 </html>

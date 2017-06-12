@@ -5,7 +5,7 @@
     {% load staticfiles %} 
     <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/di-charts-1.1.1.min.js' %}'></script>
-    <link rel="stylesheet" href='{% static 'core/js/di-charts-1.1.1.min.css' %}'>
+    <link rel="stylesheet" href='{% static 'core/js/di-charts-1.1.1.css' %}'>
     <style>
             
     button {display:block;}
@@ -46,14 +46,14 @@ $('#visform').on('keyup keypress', function(e) {
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     {% if visualisation %}
       var config = JSON.parse('{{visualisation.get_config|safe}}');
-      DiCharts.draw(document.getElementById('chart'),config,csvDat)
+      DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
     {% endif %}
     function update() {
-        $('#chart').html("")
+        $('#chart').html("");
         var config = form2config("#visform");
-        console.log(config)
-        console.log(csvDat)
-        DiCharts.draw(document.getElementById('chart'),config,csvDat);
+        console.log(config);
+        console.log(csvDat);
+        DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
     };
     update();
     $('select').change(function(){update()});
