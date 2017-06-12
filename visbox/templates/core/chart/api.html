@@ -1,16 +1,15 @@
 <html>
     <head>
-    <title>Bar chart</title>
+    <title>Chart API</title>
      {% load staticfiles %}    
     <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
     <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/charts/bar.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     </head>
     <body>
     <div style="float:left;width:100%">
-        <svg id="bar_chart"></svg>
+        <svg id="chart"></svg>
     </div>
     <script>
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){

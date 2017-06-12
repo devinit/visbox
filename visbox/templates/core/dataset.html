@@ -2,6 +2,19 @@
 
     {% block title %} DI Visbox Gallery {% endblock %}
     {% block head %}
+    <style>
+        .chart_type{
+            width:350px;
+            height:150px;
+            background-color:grey;
+            color:black;
+            font-weight:bold;
+            font-size:25px;
+            margin-bottom:5px;
+            line-height:150px;
+            text-align:center;
+        }
+    </style>
     {% endblock %}    
     {% block content %}
     <div id="content" style="width:100%">
@@ -20,17 +33,9 @@
         Select a visualisation here.
         <div style="width:100%;float:left;">
         <h3>Visualisations</h3>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Column"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "bar" dataset.pk %}"><img src="http://placehold.it/350x150?text=Bar"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "stacked_column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Stacked column"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "grouped_column" dataset.pk %}"><img src="http://placehold.it/350x150?text=Grouped column"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "donut" dataset.pk %}"><img src="http://placehold.it/350x150?text=Donut"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "pie" dataset.pk %}"><img src="http://placehold.it/350x150?text=Pie"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "line" dataset.pk %}"><img src="http://placehold.it/350x150?text=Line"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "bubble" dataset.pk %}"><img src="http://placehold.it/350x150?text=Bubble"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "area" dataset.pk %}"><img src="http://placehold.it/350x150?text=Area"></a></div>
-            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' "tree" dataset.pk %}"><img src="http://placehold.it/350x150?text=Tree"></a></div>
-
+        {% for chart_type in chart_types %}
+            <div style="float:left;margin-right:5px;"><a href="{% url 'core.views.createVis' chart_type dataset.pk %}"><div class="chart_type">{{chart_type}}</div></a></div>
+        {% endfor %}
         </div>
         <div style="width:100%;float:left;">
         <h3>Templates</h3>

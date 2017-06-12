@@ -70,7 +70,13 @@ def dataset(request,datasetPK):
     dataset.header = list(dataset.df)
     dataset.types = [(header, dataset.df.dtypes[header]) for header in dataset.header]
     dataset.table = dataset.df.to_html()
-    return render_to_response('core/dataset.html', {"user":user,"dataset":dataset,"templates":templates})
+    
+    schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
+    schemas = json.load(schema_file)         
+    schema_file.close()
+    chart_types = [schema["name"] for schema in schemas]
+    
+    return render_to_response('core/dataset.html', {"user":user,"dataset":dataset,"templates":templates,"chart_types":chart_types})
 
 @login_required
 def deleteDataset(request,datasetPK):
@@ -89,144 +95,97 @@ def deleteDataset(request,datasetPK):
 def createVis(request,chart,datasetPK):
     user = request.user
     
-    schema_file = open(settings.STATIC_ROOT+'/core/js/charts/test_schema.json')   
+    schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
     schemas = json.load(schema_file)         
     schema_file.close()
     
     dataset = get_object_or_404(Dataset,pk=datasetPK)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
     dataset.variables = list(dataset.df)
-    if chart in schemas:
+    
+    filtered_schema = [schema for schema in schemas if schema['name'] == chart]
+    if len(filtered_schema)>0:
+        chartSchema = filtered_schema[0]
         if request.method=="POST":
-            form = VisForm(request.POST,schema=schemas[chart],variables=dataset.variables)
+            form = VisForm(request.POST,schema=chartSchema,variables=dataset.variables)
             if form.is_valid():
-                visualisation = form.save(commit=False)
-                visualisation.creator = User.objects.get(username=user)
+                config = form.cleaned_data
+                visualisation = Visualisation()
+                visualisation.title = config['config.title']
+                visualisation.chart_type = chart
                 visualisation.dataset = dataset
+                visualisation.creator = User.objects.get(username=user)
+                visualisation.save_as_template = config['save_as_template']
+                visualisation.configuration_flat = config
+                visualisation.configuration = nest_config(config)
                 visualisation.save()
                 return redirect('core.views.viewVis',chartPK=visualisation.pk)
             else:
                 #Vis invalid
-                return render(request,'core/column/create.html', {"user":user,"dataset":dataset,"form":form})
+                return render(request,'core/chart/create.html', {"user":user,"dataset":dataset,"form":form,"chart":chart})
         else:
             #GET request
             chartPK = request.GET.get("copy",False)
             if chartPK:
-                form = VisForm(instance=Visualisation.objects.get(pk=chartPK),schema=schemas[chart],variables=dataset.variables)
+                visualisation = Visualisation.objects.get(pk=chartPK)
+                form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
             else:
-                form = VisForm(schema=schemas[chart],variables=dataset.variables)
-            return render(request,'core/chart/create.html', {"user":user,"dataset":dataset,"form":form,"copy":chartPK})
+                visualisation = None
+                form = VisForm(schema=chartSchema,variables=dataset.variables)
+            return render(request,'core/chart/create.html', {"user":user,"dataset":dataset,"form":form,"chart":chart,"visualisation":visualisation})
     else:
         return render_to_response('core/construction.html', {"user":user})
     
 @login_required
 def viewVis(request,chartPK):
     user = request.user
+    
+    schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
+    schemas = json.load(schema_file)         
+    schema_file.close()
+    
     visualisation = get_object_or_404(Visualisation,pk=chartPK)
+    
+    filtered_schema = [schema for schema in schemas if schema['name'] == visualisation.chart_type]
+    
     dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-    dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-    if visualisation.chart_type == "column":
-        form = ColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "bar":
-        form = BarForm(instance=visualisation,x=dataset.numerical,y=dataset.categorical)
-        return render(request,'core/bar/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "stacked_column":
-        form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/stacked_column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "donut":
-        form = DonutForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/donut/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "pie":
-        form = DonutForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/pie/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "line":
-        form = LineForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/line/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "grouped_column":
-        form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/grouped_column/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "bubble":
-        form = BubbleForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/bubble/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "area":
-        form = StackedColumnForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/area/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "tree":
-        form = TreeForm(instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        return render(request,'core/tree/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
+    dataset.variables = list(dataset.df)
+    if len(filtered_schema)>0:
+        chartSchema = filtered_schema[0]
+        form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
+        return render(request,'core/chart/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+    else:
+        return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
 
 @login_required
 def editVis(request,chartPK):
     user = request.user
+    
+    schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
+    schemas = json.load(schema_file)         
+    schema_file.close()
+    
     visualisation = get_object_or_404(Visualisation,pk=chartPK)
+    
+    filtered_schema = [schema for schema in schemas if schema['name'] == visualisation.chart_type]
+    
     dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.categorical = list(dataset.df.select_dtypes(include=['object']))
-    dataset.numerical = list(dataset.df.select_dtypes(exclude=['object']))
-    if visualisation.chart_type == "column":
-        form = ColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
+    dataset.variables = list(dataset.df)
+    
+    if len(filtered_schema)>0:
+        chartSchema = filtered_schema[0]
+        form = VisForm(request.POST or None, instance=visualisation,schema=chartSchema,variables=dataset.variables)
         if form.is_valid():
-            form.save()
+            config = form.cleaned_data
+            visualisation.title = config['config.title']
+            visualisation.save_as_template = config['save_as_template']
+            visualisation.configuration_flat = config
+            visualisation.configuration = nest_config(config)
+            visualisation.save()
             return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "bar":
-        form = BarForm(request.POST or None, instance=visualisation,x=dataset.numerical,y=dataset.categorical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/bar/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "stacked_column":
-        form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/stacked_column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "donut":
-        form = DonutForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/donut/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "pie":
-        form = DonutForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/pie/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "line":
-        form = LineForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/line/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "grouped_column":
-        form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/grouped_column/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "bubble":
-        form = BubbleForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/bubble/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "area":
-        form = StackedColumnForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/area/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    if visualisation.chart_type == "tree":
-        form = TreeForm(request.POST or None, instance=visualisation,x=dataset.categorical,y=dataset.numerical)
-        if form.is_valid():
-            form.save()
-            return redirect('core.views.viewVis',chartPK=visualisation.pk)
-        return render(request,'core/tree/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
+        return render(request,'core/chart/edit.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
     return HttpResponse("This is where you would edit chart with primary key: "+str(chartPK))
 
 @login_required
@@ -250,95 +209,39 @@ def csv(request,datasetPK):
 
 def api(request,templatePK):
     if request.method=="GET":
+        
+        schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
+        schemas = json.load(schema_file)         
+        schema_file.close()
+        
         visualisation = get_object_or_404(Visualisation,pk=templatePK)
-        chart_type = visualisation.chart_type
+        
+        filtered_schema = [schema for schema in schemas if schema['name'] == visualisation.chart_type]
         
         dataString = request.GET.get("data",False)
         filterSelection = request.GET.get("filter",False)
         if dataString:
             dataset = None
             df = pd.read_json(dataString)
-            categorical = list(df.select_dtypes(include=['object']))
-            numerical = list(df.select_dtypes(exclude=['object']))
+            variables = list(df)
         else:
             dataset = visualisation.dataset
             df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-            categorical = list(df.select_dtypes(include=['object']))
-            numerical = list(df.select_dtypes(exclude=['object']))
-        if chart_type == "column":
-            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "bar":
-            form = BarForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "donut":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "pie":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "stacked_column":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "line":
-            form = LineForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "grouped_column":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "bubble":
-            form = BubbleForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "area":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "tree":
-            form = TreeForm(instance=visualisation,x=categorical,y=numerical)
-        return render(request,'core/'+chart_type+'/api.html',{"form":form,"dataset":dataset,"filter":filterSelection,"visualisation":visualisation,"dataString":dataString})
+            variables = list(df)
+        if len(filtered_schema)>0:
+            form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
+            return render(request,'core/chart/api.html',{"form":form,"dataset":dataset,"filter":filterSelection,"visualisation":visualisation,"dataString":dataString})
+        else:
+            response = HttpResponse("Sorry, invalid chart type.")
+            return response
     else:
         response = HttpResponse("Please only GET to this URL.")
         return response
-    
+
 def config(request,templatePK):
     if request.method=="GET":
-        fileFormat = request.GET.get("format",False)
-        
-        config = {}
-        root = Element("config")
-               
         visualisation = get_object_or_404(Visualisation,pk=templatePK)
-        chart_type = visualisation.chart_type
-
-        dataset = visualisation.dataset
-        df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-        categorical = list(df.select_dtypes(include=['object']))
-        numerical = list(df.select_dtypes(exclude=['object']))
-        if chart_type == "column":
-            form = ColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "bar":
-            form = BarForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "donut":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "pie":
-            form = DonutForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "stacked_column":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "grouped_column":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "line":
-            form = LineForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "bubble":
-            form = BubbleForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "area":
-            form = StackedColumnForm(instance=visualisation,x=categorical,y=numerical)
-        if chart_type == "tree":
-            form = TreeForm(instance=visualisation,x=categorical,y=numerical)
-        config['template'] = int(templatePK)
-        child = SubElement(root,"template")
-        child.text = str(templatePK)
-        for field in form:
-            val = field.value()
-            if isinstance(val,decimal.Decimal):
-                val = float(val)
-            config[field.html_name] = val
-            child = SubElement(root,field.html_name)
-            child.text = str(field.value())
-        
-        if fileFormat=="json":
-            return HttpResponse(json.dumps(config), content_type="application/json")
-        if fileFormat=="xml":
-            return HttpResponse(tostring(root, encoding='utf8', method='xml'),content_type='text/xml')
+        config = visualisation.configuration
         return HttpResponse(json.dumps(config), content_type="application/json")
     else:
         response = HttpResponse("Please only GET to this URL.")

@@ -25,60 +25,89 @@ class UploadForm(ModelForm):
         widgets = {
             'sep':forms.RadioSelect(choices=SEP_CHOICES)
         }
-        
+
 class VisForm(ModelForm):
+    
+    def unpackSchema(self,field,variables):
+        fieldKey = field["key"]
+        fieldName = field["name"]
+        if "description" in field:
+            fieldHelp = field["description"]
+        else:
+            fieldHelp = None
+            
+        if "options" in field:
+            fieldType = "select"
+            fieldChoices = field["options"]
+        elif "type" not in field:
+            fieldType = "hidden"
+            
+        if "type" in field:
+            fieldType = field["type"]
+            
+        if "properties" in field:
+            if "axis" in fieldName.lower():
+                fieldType = "indicator"
+            else:
+                fieldType = "optionalIndicator"
+            
+        if fieldType=="hidden":
+            self.fields[fieldKey] = forms.CharField(
+                widget=forms.HiddenInput()
+                ,initial = field["value"]
+            )
+        if fieldType=="string":
+            self.fields[fieldKey] = forms.CharField()
+            self.fields[fieldKey].strip = False
+        if fieldType=="Array.<string>":
+            self.fields[fieldKey] = forms.CharField()
+        if fieldType=="number":
+            self.fields[fieldKey] = forms.FloatField()
+        if fieldType=="select":
+            self.fields[fieldKey] = forms.ChoiceField(
+                widget = forms.Select()
+                ,choices=[(var, var) for var in fieldChoices]
+            )
+        # if fieldType=="radio":
+        #     self.fields[fieldKey] = forms.ChoiceField(
+        #         widget = forms.RadioSelect()
+        #         ,choices=[(var, var) for var in fieldChoices]
+        #     )
+        if fieldType=="indicator":
+            self.fields[fieldKey] = forms.ChoiceField(
+                widget = forms.Select()
+                ,choices=[(var, var) for var in variables]
+            )
+        if fieldType=="optionalIndicator":
+            self.fields[fieldKey] = forms.ChoiceField(
+                widget = forms.Select()
+                ,choices=[(var, var) for var in ["None"]+variables]
+            )
+        if fieldType=="boolean":
+            self.fields[fieldKey] = forms.BooleanField()
+            
+        #Nothing required for now
+        self.fields[fieldKey].required = False
+        
+        # self.fields[fieldKey].help_text = fieldHelp
+        self.fields[fieldKey].label = fieldHelp
+
+        self.Meta.fields.append(fieldKey)
+        
+        if "properties" in field:
+            for subfield in field["properties"]:
+                unpackSchema = self.unpackSchema
+                unpackSchema(subfield,variables)
 
     def __init__(self, *args, **kwargs):
         schema = kwargs.pop('schema')
         variables = kwargs.pop('variables')
         super(VisForm, self).__init__(*args, **kwargs)
-        for key in schema['properties']:
-            field = schema['properties'][key]
-            fieldName = key
-            fieldType = field['type']
-            if fieldType=="string":
-                self.fields[fieldName] = forms.CharField()
-                self.fields[fieldName].strip = False
-            if fieldType=="integer":
-                self.fields[fieldName] = forms.IntegerField()
-            if fieldType=="float":
-                self.fields[fieldName] = forms.FloatField()
-            if fieldType=="select":
-                fieldChoices = field['choices']
-                self.fields[fieldName] = forms.ChoiceField(
-                    widget = forms.Select()
-                    ,choices=[(var[0], var[1]) for var in fieldChoices]
-                )
-            if fieldType=="radio":
-                fieldChoices = field['choices']
-                self.fields[fieldName] = forms.ChoiceField(
-                    widget = forms.RadioSelect()
-                    ,choices=[(var[0], var[1]) for var in fieldChoices]
-                )
-            if fieldType=="indicator":
-                self.fields[fieldName] = forms.ChoiceField(
-                    widget = forms.Select()
-                    ,choices=[(var, var) for var in variables]
-                )
-            if fieldType=="boolean":
-                self.fields[fieldName] = forms.BooleanField()
-            try:
-                fieldRequired = field['required']
-            except KeyError:
-                fieldRequired = True
-            self.fields[fieldName].required = fieldRequired
-            try:
-                fieldInitial = field['default']
-                self.fields[fieldName].initial = fieldInitial
-            except KeyError:
-                pass
-            self.Meta.fields.append(fieldName)
-        self.fields['dataset'].required = False
+        unpackSchema = self.unpackSchema
+        for field in schema['properties']:
+            unpackSchema(field,variables)
         
     class Meta:
         model = Visualisation
-        fields = ['dataset',]
-        widgets = {
-            'dataset':forms.HiddenInput()
-        }
+        fields = ['save_as_template',]
         

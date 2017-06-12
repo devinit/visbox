@@ -1,10 +1,9 @@
 {% extends 'core/base.html' %}
 
-    {% block title %} Bar chart {% endblock %}
+    {% block title %} View chart {% endblock %}
     {% block head %}
     {% load staticfiles %}    
-    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/charts/bar.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     <style>
 
     button {display:block;margin:10px;}
@@ -49,7 +48,7 @@
       {% endif %}
     </div>
     <div style="float:left;width:80%">
-      <svg id="bar_chart"></svg> 
+      <svg id="chart"></svg> 
     </div>
     <script>
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){

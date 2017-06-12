@@ -1,10 +1,9 @@
 {% extends 'core/base.html' %}
 
-    {% block title %} Bar chart {% endblock %}
+    {% block title %} Edit chart {% endblock %}
     {% block head %}
     {% load staticfiles %} 
-    <script type="text/javascript" src='{% static 'core/js/charts/common.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/charts/bar.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     {% endblock %}    
     {% block content %}
     <div style="float:left;width:20%;overflow-y:scroll;height:100%;">
@@ -30,9 +29,19 @@
       <button id="print" onclick="crowbar()">Export as vector</button>
     </div>
     <div style="float:left;width:80%">
-      <svg id="bar_chart"></svg>  
+      <svg id="chart"></svg>  
     </div>
     <script>
+    //Initial load
+    var flat_configuration = JSON.parse('{{visualisation.get_flat_config|safe}}');
+    for(var key in flat_configuration){
+      var value = flat_configuration[key];
+      if(typeof(value) === "boolean"){
+        $("[name='"+key+"']").prop("checked",value);
+      }else{
+        $("[name='"+key+"']").val(value);
+      }
+    }
     $('#visform').on('keyup keypress', function(e) {
       var keyCode = e.keyCode || e.which;
       if (keyCode === 13) { 
@@ -40,7 +49,6 @@
         return false;
       }
     });
-    
     $.getJSON("{% url 'core.views.config' visualisation.pk %}",function(config){
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           //Initial draw with config, subsequent draws with form2config

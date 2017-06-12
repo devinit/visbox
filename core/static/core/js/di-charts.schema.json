@@ -1,0 +1,1814 @@
+[
+  {
+    "name": "Area",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "area"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "Bar",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "bar"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "Bubble",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "bubble"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title of chart"
+      },
+      {
+        "name": "titleAlignment",
+        "key": "config.titleAlignment",
+        "type": "string",
+        "description": "Title of chart"
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "Array.<string>",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "horizontalAxis",
+        "key": "config.horizontalAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Horizontal Axis"
+      },
+      {
+        "name": "verticalAxis",
+        "key": "config.verticalAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Vertical Axis"
+      },
+      {
+        "name": "bubble",
+        "key": "config.bubble",
+        "type": "Object",
+        "description": "Bubble"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "ClusteredBar",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "clustered-bar"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "CompoundTreemap",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "compound-treemap"
+      }
+    ]
+  },
+  {
+    "name": "FullStackedArea",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "full-stacked-area"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "FullStackedBar",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "full-stacked-bar"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "Line",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "line"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "Partition",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "partition"
+      }
+    ]
+  },
+  {
+    "name": "Pie",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "pie"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title of chart"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "circular",
+        "key": "config.circular",
+        "properties": [
+          {
+            "name": "label",
+            "type": "string",
+            "description": "Sector label field",
+            "key": "config.legend.label"
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "description": "Sector value field",
+            "key": "config.legend.value"
+          },
+          {
+            "name": "innerRadius",
+            "type": "number",
+            "description": "Inner Radius (1-100)",
+            "key": "config.legend.innerRadius"
+          },
+          {
+            "name": "strokeWidth",
+            "type": "number",
+            "description": "Stroke Width (1-100)",
+            "key": "config.legend.strokeWidth"
+          },
+          {
+            "name": "strokeColor",
+            "type": "string",
+            "description": "Stroke Color (1-100)",
+            "key": "config.legend.strokeColor"
+          }
+        ],
+        "description": "Sectors"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "label",
+            "type": "string",
+            "description": "Sector label field",
+            "key": "config.legend.label"
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "description": "Sector value field",
+            "key": "config.legend.value"
+          },
+          {
+            "name": "innerRadius",
+            "type": "number",
+            "description": "Inner Radius (1-100)",
+            "key": "config.legend.innerRadius"
+          },
+          {
+            "name": "strokeWidth",
+            "type": "number",
+            "description": "Stroke Width (1-100)",
+            "key": "config.legend.strokeWidth"
+          },
+          {
+            "name": "strokeColor",
+            "type": "string",
+            "description": "Stroke Color (1-100)",
+            "key": "config.legend.strokeColor"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "StackedArea",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "stacked-area"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "StackedBar",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "stacked-bar"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "string",
+        "description": "Group field"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.linearAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "options": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "Orientation",
+            "key": "config.linearAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "showAxisLabel",
+            "type": "boolean",
+            "description": "Show Label",
+            "key": "config.categoryAxis.showAxisLabel"
+          },
+          {
+            "name": "axisOrientation",
+            "type": "string",
+            "description": "Orientation",
+            "key": "config.categoryAxis.axisOrientation"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Data label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "description": "Legend alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
+      }
+    ]
+  },
+  {
+    "name": "Treemap",
+    "properties": [
+      {
+        "name": "type",
+        "key": "config.type",
+        "value": "treemap"
+      }
+    ]
+  }
+]
