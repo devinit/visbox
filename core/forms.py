@@ -39,18 +39,18 @@ class VisForm(ModelForm):
         if "options" in field:
             fieldType = "select"
             fieldChoices = field["options"]
+        elif "properties" in field:
+            fieldType = "header"
         elif "type" not in field:
             fieldType = "hidden"
             
         if "type" in field:
             fieldType = field["type"]
             
-        if "properties" in field:
-            if "axis" in fieldName.lower():
-                fieldType = "indicator"
-            else:
-                fieldType = "optionalIndicator"
-            
+        if fieldType=="header":
+            self.fields[fieldKey] = forms.CharField(
+                widget=forms.TextInput(attrs={"style": "display:none;"})
+            )
         if fieldType=="hidden":
             self.fields[fieldKey] = forms.CharField(
                 widget=forms.HiddenInput()
@@ -73,12 +73,12 @@ class VisForm(ModelForm):
         #         widget = forms.RadioSelect()
         #         ,choices=[(var, var) for var in fieldChoices]
         #     )
+        # if fieldType=="indicator":
+        #     self.fields[fieldKey] = forms.ChoiceField(
+        #         widget = forms.Select()
+        #         ,choices=[(var, var) for var in variables]
+        #     )
         if fieldType=="indicator":
-            self.fields[fieldKey] = forms.ChoiceField(
-                widget = forms.Select()
-                ,choices=[(var, var) for var in variables]
-            )
-        if fieldType=="optionalIndicator":
             self.fields[fieldKey] = forms.ChoiceField(
                 widget = forms.Select()
                 ,choices=[(var, var) for var in ["None"]+variables]
@@ -91,6 +91,8 @@ class VisForm(ModelForm):
         
         # self.fields[fieldKey].help_text = fieldHelp
         self.fields[fieldKey].label = fieldHelp
+        if "default" in field:
+            self.fields[fieldKey].initial = field["default"]
 
         self.Meta.fields.append(fieldKey)
         

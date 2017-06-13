@@ -2,10 +2,6 @@
 
     {% block title %} Create chart {% endblock %}
     {% block head %}
-    {% load staticfiles %} 
-    <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
-    <script type="text/javascript" src='{% static 'core/js/di-charts-1.1.1.min.js' %}'></script>
-    <link rel="stylesheet" href='{% static 'core/js/di-charts-1.1.1.css' %}'>
     <style>
             
     button {display:block;}
@@ -44,10 +40,6 @@ $('#visform').on('keyup keypress', function(e) {
   }
 });
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
-    {% if visualisation %}
-      var config = JSON.parse('{{visualisation.get_config|safe}}');
-      DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
-    {% endif %}
     function update() {
         $('#chart').html("");
         var config = form2config("#visform");
@@ -55,7 +47,22 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         console.log(csvDat);
         DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
     };
-    update();
+    {% if visualisation %}
+      //Initial load
+      var flat_configuration = JSON.parse('{{visualisation.get_flat_config|safe}}');
+      for(var key in flat_configuration){
+        var value = flat_configuration[key];
+        if(typeof(value) === "boolean"){
+          $("[name='"+key+"']").prop("checked",value);
+        }else{
+          $("[name='"+key+"']").val(value);
+        }
+      }
+      var config = JSON.parse('{{visualisation.get_config|safe}}');
+      DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+    {% else %}
+      update();
+    {% endif %}
     $('select').change(function(){update()});
     $('input').change(function(){update()});
 });

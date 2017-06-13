@@ -18,12 +18,29 @@
 //                    result[path[1]][path[2]] = value
 //    return result
 
+function clean_value(value){
+  if(value==="None" || value===""){
+    return(null);
+  }
+  var valueFloat = parseFloat(value);
+  if(isNaN(valueFloat)){
+    return(value);
+  }else{
+    return(valueFloat);
+  }
+}
+
 function nest_config(config){
   var result = {};
   for(var key in config){
-    var value = config[key],
-    path = key.split(".");
-    if(value !=""){
+    var path = key.split(".");
+    //Special case for arrays
+    if(path[path.length-1]=="colors"){
+      var value = config[key].split(",");
+    }else{
+     var value = clean_value(config[key]);
+    };
+    if(value !== null){
       if(path[0]=="config"){
         if(result.hasOwnProperty(path[1])){
           if(path.length==2){

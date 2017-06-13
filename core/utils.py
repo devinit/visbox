@@ -3,24 +3,51 @@ from PIL import Image
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# function clean_value(value){
+#   if(value==="None" || value===""){
+#     return(null);
+#   }
+#   var valueFloat = parseFloat(value);
+#   if(isNaN(valueFloat)){
+#     return(value);
+#   }else{
+#     return(valueFloat);
+#   }
+# }
+
+def clean_value(value):
+    if value is None or value == "None" or value == "":
+        return None
+    try:
+        valueFloat = float(value)
+        return valueFloat
+    except ValueError:
+        return value
+
 def nest_config(config):
     result = {}
     for key, value in config.iteritems():
         path = key.split(".")
-        if path[0]=="config":
-            if path[1] in result:
-                if(len(path)==2):
-                    result[path[1]]["value"] = value
-                #Either 2 or 3
+        #Special case for arrays
+        if path[-1]=="colors":
+            value = value.split(",")
+        else:
+            value = clean_value(value)
+        if value is not None:
+            if path[0]=="config":
+                if path[1] in result:
+                    if(len(path)==2):
+                        result[path[1]]["value"] = value
+                    #Either 2 or 3
+                    else:
+                        result[path[1]][path[2]] = value
                 else:
-                    result[path[1]][path[2]] = value
-            else:
-                if(len(path)==2):
-                    result[path[1]] = value
-                #Either 2 or 3
-                else:
-                    result[path[1]] = {}
-                    result[path[1]][path[2]] = value
+                    if(len(path)==2):
+                        result[path[1]] = value
+                    #Either 2 or 3
+                    else:
+                        result[path[1]] = {}
+                        result[path[1]][path[2]] = value
     return result
 
 def chromePNG(url,tmpf):
