@@ -42,16 +42,22 @@ $('#visform').on('keyup keypress', function(e) {
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     function update() {
         $('#chart').html("");
+        resize_via_form("#chart");
+        var filter_by = $("[name='filter_by']").val(),
+        selectedFilter = $("[name='filter_selection']").val(),
+        sort = $("[name='sort']").val(),
+        sort_direction = $("[name='sort_direction']").val(),
+        divisor = parseFloat($("[name='unit_divisor']").val()),
+        linearAxis = $("[name='config.linearAxis.indicator']").val();
+        var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
         var config = form2config("#visform");
-        console.log(config);
-        console.log(csvDat);
-        DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+        DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     };
     {% if visualisation %}
       //Initial load
-      var flat_configuration = JSON.parse('{{visualisation.get_flat_config|safe}}');
-      for(var key in flat_configuration){
-        var value = flat_configuration[key];
+      var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
+      for(var key in flatConfig){
+        var value = flatConfig[key];
         if(typeof(value) === "boolean"){
           $("[name='"+key+"']").prop("checked",value);
         }else{

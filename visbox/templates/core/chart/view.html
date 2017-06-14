@@ -37,7 +37,7 @@
           location.href = '{% url 'core.views.png'  visualisation.pk  %}';
         };
       </script>
-      <button id="print" onclick="crowbar()">Export as vector</button>
+      <!--<button id="print" onclick="crowbar()">Export as vector</button>-->
       <button id="print" onclick="goToPNGPage()">Export as PNG</button>
       <button id="print" onclick="copy()">Create a copy</button>
       {% if user == visualisation.creator %}
@@ -50,7 +50,16 @@
     <script>
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             var config = JSON.parse('{{visualisation.get_config|safe}}');
-            DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+            var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
+            resize_via_config("#chart",flatConfig);
+            var filter_by = flatConfig.filter_by,
+            selectedFilter = flatConfig.filter_selection,
+            sort = flatConfig.sort,
+            sort_direction = flatConfig.sort_direction,
+            divisor = parseFloat(flatConfig.unit_divisor),
+            linearAxis = flatConfig["config.linearAxis.indicator"];
+            var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+            DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
         });
     </script>
     {% endblock %}

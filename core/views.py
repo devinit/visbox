@@ -229,7 +229,8 @@ def api(request,templatePK):
             df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
             variables = list(df)
         if len(filtered_schema)>0:
-            form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
+            chartSchema = filtered_schema[0]
+            form = VisForm(instance=visualisation,schema=chartSchema,variables=variables)
             return render(request,'core/chart/api.html',{"form":form,"dataset":dataset,"filter":filterSelection,"visualisation":visualisation,"dataString":dataString})
         else:
             response = HttpResponse("Sorry, invalid chart type.")

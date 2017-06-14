@@ -108,8 +108,21 @@ class VisForm(ModelForm):
         unpackSchema = self.unpackSchema
         for field in schema['properties']:
             unpackSchema(field,variables)
+        self.fields['sort'].widget = forms.Select(
+            choices=[(var,var) for var in ['None']+variables]
+        )
+        self.fields['filter_by'].widget = forms.Select(
+            choices=[(var,var) for var in ['None']+variables]
+        )
         
     class Meta:
         model = Visualisation
-        fields = ['save_as_template',]
+        fields = ['width','height','padding_top','padding_bottom',
+                  'padding_left','padding_right','sort','sort_direction',
+                  'filter_by','filter_selection','unit_divisor','save_as_template',]
+        SORT_CHOICES = [('asc','Ascending'),('desc','Descending')]
+        widgets = {
+            'sort_direction':forms.Select(choices=SORT_CHOICES),
+            'filter_selection':forms.Select(),
+        }
         

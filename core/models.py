@@ -33,6 +33,18 @@ class Visualisation(models.Model):
     configuration = JSONField(blank=True,null=True)
     save_as_template = models.BooleanField(default=False)
     
+    width = models.IntegerField(default=960)
+    height = models.IntegerField(default=500)
+    padding_top = models.IntegerField(default=0)
+    padding_right = models.IntegerField(default=0)
+    padding_bottom = models.IntegerField(default=0)
+    padding_left = models.IntegerField(default=0)
+    sort = models.CharField(null=True,blank=True,max_length=255)
+    sort_direction = models.CharField(null=True,blank=True,max_length=255)
+    filter_by = models.CharField(default="None",max_length=255)
+    filter_selection = models.CharField(null=True,blank=True,max_length=255)
+    unit_divisor = models.IntegerField(default=1)
+    
     def __unicode__(self):
         return u'%s' % self.title
     

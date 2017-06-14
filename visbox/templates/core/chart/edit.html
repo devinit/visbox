@@ -16,29 +16,62 @@
       <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>
       </form>
       <script>
-        {% load staticfiles %}   
-        crowbar = function () {
-                  var e = document.createElement('script'); e.setAttribute('src',
-                  '{% static 'core/js/svg-crowbar.js' %}'
-                  ); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e);
-
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        };
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        goToPNGPage = function(){
+          var editUrl = '{% url 'core.views.editVis' visualisation.pk %}';
+          $.post(
+            editUrl,
+            $("#visform").serialize(),
+            function(){
+            location.href = '{% url 'core.views.png'  visualisation.pk  %}';
+            }).fail(function(){
+            alert("Sorry, unable to save before export. Please try saving first and then exporting from the View page.");
+          });
         };
       </script>
-      <button id="print" onclick="crowbar()">Export as vector</button>
+      <!--<button id="print" onclick="crowbar()">Export as vector</button>-->
+      <button id="print" onclick="goToPNGPage()">Export as PNG</button>
     </div>
     <div style="float:left;width:80%" id="chart">
     </div>
     <script>
     //Initial load
-    var flat_configuration = JSON.parse('{{visualisation.get_flat_config|safe}}');
-    for(var key in flat_configuration){
-      var value = flat_configuration[key];
+    var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
+    for(var key in flatConfig){
+      var value = flatConfig[key];
       if(typeof(value) === "boolean"){
         $("[name='"+key+"']").prop("checked",value);
       }else{
         $("[name='"+key+"']").val(value);
       }
     }
+    resize_via_config("#chart",flatConfig);
     $('#visform').on('keyup keypress', function(e) {
       var keyCode = e.keyCode || e.which;
       if (keyCode === 13) { 
@@ -49,13 +82,26 @@
     d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       //Initial draw with config, subsequent draws with form2config
       var config = JSON.parse('{{visualisation.get_config|safe}}');
-      DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+      var filter_by = flatConfig.filter_by,
+      selectedFilter = flatConfig.filter_selection,
+      sort = flatConfig.sort,
+      sort_direction = flatConfig.sort_direction,
+      divisor = parseFloat(flatConfig.unit_divisor),
+      linearAxis = flatConfig["config.linearAxis.indicator"];
+      var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+      DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
       function update() {
-          $('#chart').html("");
-          var config = form2config("#visform");
-          console.log(config);
-          console.log(csvDat);
-          DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+        $('#chart').html("");
+        resize_via_form("#chart");
+        var filter_by = $("[name='filter_by']").val(),
+        selectedFilter = $("[name='filter_selection']").val(),
+        sort = $("[name='sort']").val(),
+        sort_direction = $("[name='sort_direction']").val(),
+        divisor = parseFloat($("[name='unit_divisor']").val()),
+        linearAxis = $("[name='config.linearAxis.indicator']").val();
+        var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+        var config = form2config("#visform");
+        DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
       };
       $('select').change(function(){update()});
       $('input').change(function(){update()});

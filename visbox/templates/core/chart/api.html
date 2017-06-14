@@ -5,6 +5,7 @@
     <link rel=stylesheet href="{% static "core/css/base.css" %}" type="text/css">
     <script type="text/javascript" src='{% static 'core/js/jquery.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/d3.min.js' %}'></script>
+    <script type="text/javascript" src='{% static 'core/js/lodash.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/di-charts.min.js' %}'></script>
     <link rel="stylesheet" href='{% static 'core/js/di-charts.min.css' %}'>
@@ -13,14 +14,30 @@
     <div style="float:left;width:100%" id="chart">
     </div>
     <script>
-    {% if dataset %}
     var config = JSON.parse('{{visualisation.get_config|safe}}');
+    var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
+    resize_via_config("#chart",flatConfig);
+    {% if dataset %}
     d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
-         DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+        var filter_by = flatConfig.filter_by,
+        selectedFilter = flatConfig.filter_selection,
+        sort = flatConfig.sort,
+        sort_direction = flatConfig.sort_direction,
+        divisor = parseFloat(flatConfig.unit_divisor),
+        linearAxis = flatConfig["config.linearAxis.indicator"];
+        var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+        DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     });
     {% else %}
-    var csvDat = JSON.parse('{{dataString|safe}}');
-     DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+        var csvDat = JSON.parse('{{dataString|safe}}');
+        var filter_by = flatConfig.filter_by,
+        selectedFilter = flatConfig.filter_selection,
+        sort = flatConfig.sort,
+        sort_direction = flatConfig.sort_direction,
+        divisor = parseFloat(flatConfig.unit_divisor),
+        linearAxis = flatConfig["config.linearAxis.indicator"];
+        var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+        DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     {% endif %}
     </script>
     </body>

@@ -63,7 +63,7 @@ def chromePNG(url,tmpf):
     driver = webdriver.Chrome(executable_path='/src/chromedriver_linux64/chromedriver',chrome_options=options)
     driver.get(url)
 
-    element = driver.find_element_by_css_selector('svg')
+    element = driver.find_element_by_css_selector('#chart')
     driver.save_screenshot(tmpf)
     location = element.location
     size = element.size
@@ -94,7 +94,7 @@ def chromeSVG(url):
     
     driver = webdriver.Chrome(executable_path='/src/chromedriver_linux64/chromedriver',chrome_options=options)
     driver.get(url)
-    element = driver.find_element_by_css_selector('svg')
+    element = driver.find_element_by_css_selector('#chart')
     source_code = element.get_attribute("outerHTML")
     
     driver.close()
