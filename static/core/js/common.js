@@ -61,6 +61,8 @@ function filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,li
   //Now that data is filtered, let's sort it
   if(sort!=="None"){
     var sortedData = _.orderBy(data,[sort],[sort_direction])
+  }else{
+    var sortedData = data;
   }
 
     return(sortedData);
