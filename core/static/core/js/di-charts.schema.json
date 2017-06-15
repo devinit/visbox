@@ -67,6 +67,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -108,6 +120,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -261,6 +285,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -302,6 +338,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -455,6 +503,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -496,6 +556,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -659,6 +731,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -700,6 +784,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -853,6 +949,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -894,6 +1002,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -1047,6 +1167,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -1088,6 +1220,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -1415,6 +1559,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -1456,6 +1612,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
@@ -1609,6 +1777,18 @@
             "key": "config.linearAxis.showGridlines"
           },
           {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
             "name": "axisLabel",
             "type": "string",
             "description": "Label",
@@ -1650,6 +1830,18 @@
             "type": "boolean",
             "description": "Show Axis",
             "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
           },
           {
             "name": "axisLabel",
