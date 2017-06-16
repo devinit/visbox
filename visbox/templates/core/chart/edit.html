@@ -2,6 +2,11 @@
 
     {% block title %} Edit chart {% endblock %}
     {% block head %}
+    <style>
+
+    button {display:block;margin:10px;}
+    
+    </style>
     {% endblock %}    
     {% block content %}
     <div style="float:left;width:20%;overflow-y:scroll;height:100%;">
@@ -15,48 +20,8 @@
       </div>
       <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>
       </form>
-      <script>
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        };
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-        goToPNGPage = function(){
-          var editUrl = '{% url 'core.views.editVis' visualisation.pk %}';
-          $.post(
-            editUrl,
-            $("#visform").serialize(),
-            function(){
-            location.href = '{% url 'core.views.png'  visualisation.pk  %}';
-            }).fail(function(){
-            alert("Sorry, unable to save before export. Please try saving first and then exporting from the View page.");
-          });
-        };
-      </script>
-      <!--<button id="print" onclick="crowbar()">Export as vector</button>-->
-      <button id="print" onclick="goToPNGPage()">Export as PNG</button>
+      <button id="print" onclick="domExport('chart','svg')">Export as vector</button>
+      <button id="print" onclick="domExport('chart','png')">Export as PNG</button>
     </div>
     <div style="float:left;max-width:80%;top:10px;left:10px;" id="chart">
     </div>

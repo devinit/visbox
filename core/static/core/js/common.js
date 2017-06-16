@@ -1,3 +1,23 @@
+function domExport(nodeSelector,type){
+  var node = document.getElementById(nodeSelector);
+  
+  if(type=="png"){
+   domtoimage.toBlob(node)
+    .then(function (blob) {
+        window.saveAs(blob, 'chart.png');
+    }); 
+  }else if(type=="svg"){
+    domtoimage.toSvg(node)
+      .then(function(dataUrl){
+        var dataSplit = dataUrl.split(",");
+        dataSplit.shift();
+        var data = dataSplit.join(",").replace("%0A","");
+        var blob = new Blob([data],{type:"image/svg+xml"});
+        window.saveAs(blob,'chart.svg');
+      });
+  }  
+}
+
 function resize_via_form(chart){
   var width = $("[name='width']").val()+"px",
   height = $("[name='height']").val()+"px",

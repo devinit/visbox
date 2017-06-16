@@ -7,9 +7,6 @@ ADD ./ /src
 
 WORKDIR /src
 # install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-RUN apt-get --assume-yes install wget
-RUN /src/grab_chrome.sh
 RUN pip install -r requirements.txt
 RUN python manage.py collectstatic --noinput
 

@@ -247,44 +247,4 @@ def config(request,templatePK):
     else:
         response = HttpResponse("Please only GET to this URL.")
         return response
-    
-def png(request,templatePK):
-    visualisation = get_object_or_404(Visualisation,pk=templatePK)
-    dataString = request.GET.get("data",False)
-    filterSelection = request.GET.get("filter",False)
-    base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
-    url = base_url
-    if dataString:
-        url = base_url+"?data="+dataString
-    if filterSelection:
-        url = base_url+"?filter="+filterSelection
-    if dataString and filterSelection:
-        url = base_url+"?data="+dataString+"&filter="+filterSelection
-        
-
-    newPNG = NamedTemporaryFile(suffix='.png')
-    chromePNG(url,newPNG.name)
-    response = HttpResponse(newPNG,content_type="image/png")
-    response['Filename'] = visualisation.title+".png"
-    response['Content-Disposition'] = 'attachment; filename='+visualisation.title+".png"
-    return response
-
-def svg(request,templatePK):
-    visualisation = get_object_or_404(Visualisation,pk=templatePK)
-    dataString = request.GET.get("data",False)
-    filterSelection = request.GET.get("filter",False)
-    base_url = "http://127.0.0.1"+reverse('core.views.api',kwargs={"templatePK":templatePK})
-    url = base_url
-    if dataString:
-        url = base_url+"?data="+dataString
-    if filterSelection:
-        url = base_url+"?filter="+filterSelection
-    if dataString and filterSelection:
-        url = base_url+"?data="+dataString+"&filter="+filterSelection
-
-    source_code = chromeSVG(url)
-    response = HttpResponse(source_code,content_type="image/svg+xml")
-    response['Filename'] = visualisation.title+".svg"
-    response['Content-Disposition'] = 'attachment; filename='+visualisation.title+".svg"
-    return response
 

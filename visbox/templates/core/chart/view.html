@@ -11,16 +11,6 @@
     {% block content %}
     <div style="float:left;width:20%;overflow-y:scroll;">
       <script>
-        {% load staticfiles %}   
-        crowbar = function () {
-                  var e = document.createElement('script'); e.setAttribute('src',
-                  '{% static 'core/js/svg-crowbar.js' %}'
-                  ); e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e);
-                  //var config = {
-                  //  filename: 'chart',
-                  //}
-                  //d3_save_svg.save(d3.select('svg').node(), config);
-        };
         goToEditPage = function(){
             location.href = '{% url 'core.views.editVis' visualisation.pk %}';
         };
@@ -33,12 +23,9 @@
         copy = function(){
           location.href = '{% url 'core.views.createVis'  visualisation.chart_type visualisation.dataset.pk %}?copy={{visualisation.pk}}'
         };
-        goToPNGPage = function(){
-          location.href = '{% url 'core.views.png'  visualisation.pk  %}';
-        };
       </script>
-      <!--<button id="print" onclick="crowbar()">Export as vector</button>-->
-      <button id="print" onclick="goToPNGPage()">Export as PNG</button>
+      <button id="print" onclick="domExport('chart','svg')">Export as vector</button>
+      <button id="print" onclick="domExport('chart','png')">Export as PNG</button>
       <button id="print" onclick="copy()">Create a copy</button>
       {% if user == visualisation.creator %}
       <button id="edit" onclick="goToEditPage()">Edit</button>
