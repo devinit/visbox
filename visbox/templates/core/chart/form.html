@@ -10,25 +10,10 @@
         margin-top:5px;
     }
 </style>
-<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Linear axis options</a>
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Axis options</a>
 <div class="toggle">
 {% for field in form %}
-  {% if field.field.widget.attrs.section == "Linear axis options" %}
-    <div class="fieldWrapper">
-      {{ field.errors }}
-      {{ field.label_tag }} {{ field }}
-      {% if field.help_text %}
-      <p class="help">{{ field.help_text|safe }}</p>
-      {% endif %}
-    </div>
-  {% endif %}
-{% endfor %}
-</div>
-
-<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Category axis options</a>
-<div class="toggle" style="display:none;">
-{% for field in form %}
-  {% if field.field.widget.attrs.section == "Category axis options" %}
+  {% if field.field.widget.attrs.section == "Axis options" %}
     <div class="fieldWrapper">
       {{ field.errors }}
       {{ field.label_tag }} {{ field }}
@@ -157,3 +142,8 @@
   {% endif %}
 {% endfor %}
 </div>
+<script>
+    $("[for='id_config.linearAxis'").css("font-weight","bold")
+    $("[for='id_config.categoryAxis'").css("font-weight","bold")
+    $("[for='id_config.circular'").css("font-weight","bold")
+</script>

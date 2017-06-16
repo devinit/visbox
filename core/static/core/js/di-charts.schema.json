@@ -39,6 +39,12 @@
         "description": "Groups"
       },
       {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
         "name": "colors",
         "key": "config.colors",
         "type": "Array.<string>",
@@ -257,6 +263,12 @@
         "description": "Groups"
       },
       {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
         "name": "colors",
         "key": "config.colors",
         "type": "Array.<string>",
@@ -473,6 +485,12 @@
         "key": "config.groupBy",
         "type": "indicator",
         "description": "Groups"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
       },
       {
         "name": "colors",
@@ -703,6 +721,12 @@
         "description": "Groups"
       },
       {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
         "name": "colors",
         "key": "config.colors",
         "type": "Array.<string>",
@@ -921,6 +945,12 @@
         "description": "Groups"
       },
       {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
         "name": "colors",
         "key": "config.colors",
         "type": "Array.<string>",
@@ -1137,6 +1167,12 @@
         "key": "config.groupBy",
         "type": "indicator",
         "description": "Groups"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
       },
       {
         "name": "colors",
@@ -1403,20 +1439,20 @@
         "properties": [
           {
             "name": "label",
-            "type": "string",
+            "type": "indicator",
             "description": "Label indicator",
             "key": "config.circular.label"
           },
           {
             "name": "value",
-            "type": "string",
+            "type": "indicator",
             "description": "Sector indicator",
             "key": "config.circular.value"
           },
           {
             "name": "innerRadius",
             "type": "number",
-            "description": "Inner Radius (1-100)",
+            "description": "Inner Radius (0 - 100%)",
             "key": "config.circular.innerRadius"
           },
           {
@@ -1529,6 +1565,12 @@
         "key": "config.groupBy",
         "type": "indicator",
         "description": "Groups"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
       },
       {
         "name": "colors",
@@ -1747,6 +1789,12 @@
         "key": "config.groupBy",
         "type": "indicator",
         "description": "Groups"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
       },
       {
         "name": "colors",

@@ -46,9 +46,9 @@ class VisForm(ModelForm):
     def sectionField(self,field):
         fieldCategories = {}
         
-        fieldCategories["config.linearAxis."] = "Linear axis options"
-        
-        fieldCategories["config.categoryAxis."] = "Category axis options"
+        fieldCategories["config.linearAxis"] = "Axis options"     
+        fieldCategories["config.categoryAxis"] = "Axis options"
+        fieldCategories["config.circular"] = "Axis options"
         
         fieldCategories["config.colors"] = "Groups and colours"
         fieldCategories["config.groupBy"] = "Groups and colours"
@@ -128,6 +128,8 @@ class VisForm(ModelForm):
             if fieldKey.startswith("config.linearAxis"):
                 variables = linear+category
             elif fieldKey.startswith("config.categoryAxis"):
+                variables = category+linear
+            elif fieldKey.startswith("config.circular"):
                 variables = category+linear
             else:
                 variables = ["None"]+category+linear
