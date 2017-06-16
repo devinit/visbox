@@ -46,6 +46,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     };
     {% if visualisation %}
       //Initial load
+      var config = JSON.parse('{{visualisation.get_config|safe}}');
       var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
       for(var key in flatConfig){
         var value = flatConfig[key];
