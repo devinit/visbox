@@ -55,8 +55,15 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           $("[name='"+key+"']").val(value);
         }
       }
-      var config = JSON.parse('{{visualisation.get_config|safe}}');
-      DiCharts.draw({element:document.getElementById('chart'),config:config,data:csvDat});
+      resize_via_config("#chart",flatConfig);
+      var filter_by = flatConfig.filter_by,
+      selectedFilter = flatConfig.filter_selection,
+      sort = flatConfig.sort,
+      sort_direction = flatConfig.sort_direction,
+      divisor = parseFloat(flatConfig.unit_divisor),
+      linearAxis = flatConfig["config.linearAxis.indicator"];
+      var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+      DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     {% else %}
       update();
     {% endif %}
