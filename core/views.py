@@ -101,13 +101,14 @@ def createVis(request,chart,datasetPK):
     
     dataset = get_object_or_404(Dataset,pk=datasetPK)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.variables = list(dataset.df)
+    dataset.category = list(dataset.df.select_dtypes(include=['object']))
+    dataset.linear = list(dataset.df.select_dtypes(exclude=['object']))
     
     filtered_schema = [schema for schema in schemas if schema['name'] == chart]
     if len(filtered_schema)>0:
         chartSchema = filtered_schema[0]
         if request.method=="POST":
-            form = VisForm(request.POST,schema=chartSchema,variables=dataset.variables)
+            form = VisForm(request.POST,schema=chartSchema,category=dataset.category,linear=dataset.linear)
             if form.is_valid():
                 config = form.cleaned_data
                 visualisation = Visualisation()
@@ -128,10 +129,10 @@ def createVis(request,chart,datasetPK):
             chartPK = request.GET.get("copy",False)
             if chartPK:
                 visualisation = Visualisation.objects.get(pk=chartPK)
-                form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
+                form = VisForm(instance=visualisation,schema=chartSchema,category=dataset.category,linear=dataset.linear)
             else:
                 visualisation = None
-                form = VisForm(schema=chartSchema,variables=dataset.variables)
+                form = VisForm(schema=chartSchema,category=dataset.category,linear=dataset.linear)
             return render(request,'core/chart/create.html', {"user":user,"dataset":dataset,"form":form,"chart":chart,"visualisation":visualisation})
     else:
         return render_to_response('core/construction.html', {"user":user})
@@ -139,24 +140,11 @@ def createVis(request,chart,datasetPK):
 @login_required
 def viewVis(request,chartPK):
     user = request.user
-    
-    schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
-    schemas = json.load(schema_file)         
-    schema_file.close()
-    
     visualisation = get_object_or_404(Visualisation,pk=chartPK)
-    
-    filtered_schema = [schema for schema in schemas if schema['name'] == visualisation.chart_type]
-    
     dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
-    dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.variables = list(dataset.df)
-    if len(filtered_schema)>0:
-        chartSchema = filtered_schema[0]
-        form = VisForm(instance=visualisation,schema=chartSchema,variables=dataset.variables)
-        return render(request,'core/chart/view.html',{"user":user,"form":form,"dataset":dataset,"visualisation":visualisation})
-    else:
-        return HttpResponse("This is where you would view chart with primary key: "+str(chartPK))
+    
+    return render(request,'core/chart/view.html',{"user":user,"visualisation":visualisation,"dataset":dataset})
+
 
 @login_required
 def editVis(request,chartPK):
@@ -172,11 +160,12 @@ def editVis(request,chartPK):
     
     dataset = get_object_or_404(Dataset,pk=visualisation.dataset.pk)
     dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    dataset.variables = list(dataset.df)
+    dataset.category = list(dataset.df.select_dtypes(include=['object']))
+    dataset.linear = list(dataset.df.select_dtypes(exclude=['object']))
     
     if len(filtered_schema)>0:
         chartSchema = filtered_schema[0]
-        form = VisForm(request.POST or None, instance=visualisation,schema=chartSchema,variables=dataset.variables)
+        form = VisForm(request.POST or None, instance=visualisation,schema=chartSchema,category=dataset.category,linear=dataset.linear)
         if form.is_valid():
             config = form.cleaned_data
             visualisation.title = config['config.title']
@@ -210,31 +199,14 @@ def csv(request,datasetPK):
 def api(request,templatePK):
     if request.method=="GET":
         
-        schema_file = open(settings.STATIC_ROOT+'/core/js/di-charts.schema.json')   
-        schemas = json.load(schema_file)         
-        schema_file.close()
-        
         visualisation = get_object_or_404(Visualisation,pk=templatePK)
         
-        filtered_schema = [schema for schema in schemas if schema['name'] == visualisation.chart_type]
-        
         dataString = request.GET.get("data",False)
-        filterSelection = request.GET.get("filter",False)
         if dataString:
             dataset = None
-            df = pd.read_json(dataString)
-            variables = list(df)
         else:
             dataset = visualisation.dataset
-            df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-            variables = list(df)
-        if len(filtered_schema)>0:
-            chartSchema = filtered_schema[0]
-            form = VisForm(instance=visualisation,schema=chartSchema,variables=variables)
-            return render(request,'core/chart/api.html',{"form":form,"dataset":dataset,"filter":filterSelection,"visualisation":visualisation,"dataString":dataString})
-        else:
-            response = HttpResponse("Sorry, invalid chart type.")
-            return response
+        return render(request,'core/chart/api.html',{"dataset":dataset,"visualisation":visualisation,"dataString":dataString})
     else:
         response = HttpResponse("Please only GET to this URL.")
         return response

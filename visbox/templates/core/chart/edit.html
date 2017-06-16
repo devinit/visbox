@@ -4,7 +4,7 @@
     {% block head %}
     <style>
 
-    button {display:block;margin:10px;}
+    button {display:block;}
     
     </style>
     {% endblock %}    
@@ -14,10 +14,7 @@
         <input type="hidden" name="chart_type" value="bar">
         <input type="hidden" name="datasetPK" value="{{dataset.pk}}">
         {% csrf_token %}
-      <a href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Customize and style</a>
-      <div class="toggle">
-      {{form.as_p}}
-      </div>
+        {% include 'core/chart/form.html' %}
       <button type="submit" onclick="$('div.toggle').slideDown()">Save</button>
       </form>
       <button id="print" onclick="domExport('chart','svg')">Export as vector</button>

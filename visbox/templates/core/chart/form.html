@@ -1,0 +1,159 @@
+<style>
+    a.preventhighlight{
+        border:none;
+        outline:none;
+        text-decoration: none;
+        margin-bottom:10px;
+        margin-top:10px;
+    }
+    .fieldWrapper{
+        margin-top:5px;
+    }
+</style>
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Linear axis options</a>
+<div class="toggle">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Linear axis options" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Category axis options</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Category axis options" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Groups and colours</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Groups and colours" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Sort, filter, and divide</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Sort, filter, and divide" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Whole chart options</a>
+<div class="toggle" style="display:none;">
+    <div style="display:none;">
+        {% for field in form.hidden_fields %}
+        {% if field.field.widget.attrs.section == "Whole chart options" %}
+          <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+{% for field in form.visible_fields %}
+  {% if field.field.widget.attrs.section == "Whole chart options" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Sizing</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Sizing" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Chart title</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Chart title" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Legend options</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Legend options" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+
+<a class="preventhighlight" href="#" onclick="$(this).next().slideToggle();" style="display:block;">&gt; Visbox options</a>
+<div class="toggle" style="display:none;">
+{% for field in form %}
+  {% if field.field.widget.attrs.section == "Visbox options" %}
+    <div class="fieldWrapper">
+      {{ field.errors }}
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}
+      <p class="help">{{ field.help_text|safe }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
