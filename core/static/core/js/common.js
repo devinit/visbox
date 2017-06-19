@@ -41,7 +41,7 @@ function resize_via_config(chart,config){
   
   $(chart).css("width",width);
   $(chart).css("height",height);
-  $(chart).css("margin",top+right+bottom+left);
+  $(chart).css("padding",top+right+bottom+left);
 }
 
 function filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat){
