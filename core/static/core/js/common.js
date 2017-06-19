@@ -11,7 +11,7 @@ function domExport(nodeSelector,type){
       .then(function(dataUrl){
         var dataSplit = dataUrl.split(",");
         dataSplit.shift();
-        var data = dataSplit.join(",").replace("%0A","");
+        var data = dataSplit.join(",").replace(new RegExp("%0A", 'g'), "");
         var blob = new Blob([data],{type:"image/svg+xml"});
         window.saveAs(blob,'chart.svg');
       });
