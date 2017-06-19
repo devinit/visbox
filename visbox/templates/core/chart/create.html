@@ -3,9 +3,8 @@
     {% block title %} Create chart {% endblock %}
     {% block head %}
     <style>
-            
-    button {display:block;}
-
+    button {display:block;margin-bottom:10px;}
+    .chart {padding:1em;float:left;}
     </style>
     {% endblock %}    
     {% block content %}
@@ -16,10 +15,11 @@
       
       <button type="submit" onclick="$('div.toggle').slideDown()">Save chart and configuration</button>
       </form>
-      <button id="print" onclick="domExport('chart','svg')">Export as vector</button>
-      <button id="print" onclick="domExport('chart','png')">Export as PNG</button>
+      <button id="print" onclick="domExport('capture','svg')">Export as vector</button>
+      <button id="print" onclick="domExport('capture','png')">Export as PNG</button>
     </div>
-    <div style="float:left;max-width:80%;" id="chart">
+    <div style="max-width:75%;" class="chart" id="capture">
+			<div id="chart"></div>
     </div>
 <script>
 $('#visform').on('keyup keypress', function(e) {
@@ -32,7 +32,7 @@ $('#visform').on('keyup keypress', function(e) {
 d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
     function update() {
         $('#chart').html("");
-        resize_via_form("#chart");
+        resize_via_form(".chart");
         var filter_by = $("[name='filter_by']").val(),
         selectedFilter = $("[name='filter_selection']").val(),
         sort = $("[name='sort']").val(),
@@ -56,7 +56,7 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
           $("[name='"+key+"']").val(value);
         }
       }
-      resize_via_config("#chart",flatConfig);
+      resize_via_config(".chart",flatConfig);
       var filter_by = flatConfig.filter_by,
       selectedFilter = flatConfig.filter_selection,
       sort = flatConfig.sort,

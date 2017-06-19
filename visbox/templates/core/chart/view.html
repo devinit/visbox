@@ -3,8 +3,7 @@
     {% block title %} View chart {% endblock %}
     {% block head %}
     <style>
-
-    button {display:block;}
+    button {display:block;margin-bottom:10px;}
     .chart {padding:1em;float:left;}
     </style>
     {% endblock %}    
@@ -33,13 +32,13 @@
       {% endif %}
     </div>
     <div style="max-width:75%;" class="chart" id="capture">
-	<div id="chart"></div>
+			<div id="chart"></div>
     </div>
     <script>
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
             var config = JSON.parse('{{visualisation.get_config|safe}}');
             var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
-            resize_via_config("#chart",flatConfig);
+            resize_via_config(".chart",flatConfig);
             var filter_by = flatConfig.filter_by,
             selectedFilter = flatConfig.filter_selection,
             sort = flatConfig.sort,

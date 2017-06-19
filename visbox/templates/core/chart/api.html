@@ -9,14 +9,18 @@
     <script type="text/javascript" src='{% static 'core/js/common.js' %}'></script>
     <script type="text/javascript" src='{% static 'core/js/di-charts.min.js' %}'></script>
     <link rel="stylesheet" href='{% static 'core/js/di-charts.min.css' %}'>
+    <style>
+        .chart {padding:1em;float:left;}
+    </style>
     </head>
     <body>
-    <div style="float:left;width:100%;" id="chart">
+    <div style="max-width:100%;" class="chart" id="capture">
+		<div id="chart"></div>
     </div>
     <script>
     var config = JSON.parse('{{visualisation.get_config|safe}}');
     var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
-    resize_via_config("#chart",flatConfig);
+    resize_via_config(".chart",flatConfig);
     {% if dataset %}
     d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         var filter_by = flatConfig.filter_by,
