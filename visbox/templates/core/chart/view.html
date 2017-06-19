@@ -5,7 +5,7 @@
     <style>
 
     button {display:block;}
-    
+    .chart {padding:1em;float:left;}
     </style>
     {% endblock %}    
     {% block content %}
@@ -24,15 +24,16 @@
           location.href = '{% url 'core.views.createVis'  visualisation.chart_type visualisation.dataset.pk %}?copy={{visualisation.pk}}'
         };
       </script>
-      <button id="print" onclick="domExport('chart','svg')">Export as vector</button>
-      <button id="print" onclick="domExport('chart','png')">Export as PNG</button>
+      <button id="print" onclick="domExport('capture','svg')">Export as vector</button>
+      <button id="print" onclick="domExport('capture','png')">Export as PNG</button>
       <button id="print" onclick="copy()">Create a copy</button>
       {% if user == visualisation.creator %}
       <button id="edit" onclick="goToEditPage()">Edit</button>
       <button id="edit" onclick="goToDeletePage()">Delete</button>
       {% endif %}
     </div>
-    <div style="float:left;max-width:80%;" id="chart">
+    <div style="max-width:75%;" class="chart" id="capture">
+	<div id="chart"></div>
     </div>
     <script>
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
