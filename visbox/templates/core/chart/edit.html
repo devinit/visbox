@@ -66,6 +66,17 @@
         var config = form2config("#visform");
         DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
       };
+			$(".colorPicker ul").on('click','li',function(){
+            var parentId = $(this).parent().attr("id");
+            if (parentId=="available") {
+                $(this).appendTo($('.colorPicker #selected'));
+            }else{
+                $(this).appendTo($('.colorPicker #available'));
+            }
+            getColours();
+            reorder();
+						update();
+        });
       $(".colorPicker ul").on("sortupdate",function(){getColours();update();});
 			$('select').change(function(){update()});
       $('input').change(function(){update()});
