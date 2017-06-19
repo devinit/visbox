@@ -28,7 +28,7 @@ function resize_via_form(chart){
   
   $(chart).css("width",width);
   $(chart).css("height",height);
-  $(chart).css("margin",top+right+bottom+left);
+  $(chart).css("padding",top+right+bottom+left);
 }
 
 function resize_via_config(chart,config){
