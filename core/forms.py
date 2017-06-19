@@ -35,7 +35,7 @@ class VisForm(ModelForm):
         fieldDefaults["showGridlines"] = True
         fieldDefaults["categoryAxis.innerPadding"] = 0.5
         fieldDefaults["categoryAxis.outerPadding"] = 0.5
-        fieldDefaults["config.colors"] = "#e84439,#f8c1b2,#f0826d,#bc2629,#8f1b13"
+        fieldDefaults["config.colors"] = "#e84439"
         
         for key in fieldDefaults:
             if field.endswith(key):
@@ -49,15 +49,15 @@ class VisForm(ModelForm):
         fieldCategories["config.linearAxis"] = "Axis options"     
         fieldCategories["config.categoryAxis"] = "Axis options"
         fieldCategories["config.circular"] = "Axis options"
+        fieldCategories["unit_divisor"] = "Axis options"
         
-        fieldCategories["config.colors"] = "Groups and colours"
-        fieldCategories["config.groupBy"] = "Groups and colours"
+        fieldCategories["config.colors"] = "Colours"
         
-        fieldCategories["sort"] = "Sort, filter, and divide"
-        fieldCategories["sort_direction"] = "Sort, filter, and divide"
-        fieldCategories["filter_by"] = "Sort, filter, and divide"
-        fieldCategories["filter_selection"] = "Sort, filter, and divide"
-        fieldCategories["unit_divisor"] = "Sort, filter, and divide"
+        fieldCategories["sort"] = "Sort, filter, and group"
+        fieldCategories["sort_direction"] = "Sort, filter, and group"
+        fieldCategories["filter_by"] = "Sort, filter, and group"
+        fieldCategories["filter_selection"] = "Sort, filter, and group"
+        fieldCategories["config.groupBy"] = "Sort, filter, and group"
         
         fieldCategories["config.orientation"] = "Whole chart options"
         

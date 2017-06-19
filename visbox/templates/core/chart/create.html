@@ -41,7 +41,6 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         linearAxis = $("[name='config.linearAxis.indicator']").val();
         var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
         var config = form2config("#visform");
-        console.log(config)
         DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     };
     {% if visualisation %}
@@ -66,8 +65,11 @@ d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
       DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
     {% else %}
+			var config = form2config("#visform");
+			setColours(config.colors);
       update();
     {% endif %}
+		$(".colorPicker ul").on("sortupdate",function(){getColours();update();});
     $('select').change(function(){update()});
     $('input').change(function(){update()});
 });

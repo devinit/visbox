@@ -44,6 +44,7 @@
     d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
       //Initial draw with config, subsequent draws with form2config
       var config = JSON.parse('{{visualisation.get_config|safe}}');
+			setColours(config.colors);
       var filter_by = flatConfig.filter_by,
       selectedFilter = flatConfig.filter_selection,
       sort = flatConfig.sort,
@@ -65,7 +66,8 @@
         var config = form2config("#visform");
         DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
       };
-      $('select').change(function(){update()});
+      $(".colorPicker ul").on("sortupdate",function(){getColours();update();});
+			$('select').change(function(){update()});
       $('input').change(function(){update()});
     });
     </script>
