@@ -32,7 +32,7 @@
       <button id="edit" onclick="goToDeletePage()">Delete</button>
       {% endif %}
     </div>
-    <div style="float:left;max-width:80%;top:10px;left:10px;" id="chart">
+    <div style="float:left;max-width:80%;" id="chart">
     </div>
     <script>
         d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
