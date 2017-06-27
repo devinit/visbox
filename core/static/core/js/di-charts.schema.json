@@ -51,6 +51,12 @@
         "description": "Colors"
       },
       {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
         "name": "linearAxis",
         "key": "config.linearAxis",
         "properties": [
@@ -273,6 +279,12 @@
         "key": "config.colors",
         "type": "Array.<string>",
         "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
       },
       {
         "name": "linearAxis",
@@ -499,6 +511,12 @@
         "description": "Colors"
       },
       {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
         "name": "linearAxis",
         "key": "config.linearAxis",
         "properties": [
@@ -672,12 +690,237 @@
     ]
   },
   {
-    "name": "CompoundTreemap",
+    "name": "DualSidebar",
     "properties": [
       {
         "name": "type",
         "key": "config.type",
-        "value": "compound-treemap"
+        "value": "dual-sidebar"
+      },
+      {
+        "name": "splitBy",
+        "key": "config.splitBy",
+        "value": "indicator"
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "titleAlignment",
+        "key": "config.titleAlignment",
+        "description": "Title Alignment",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ]
+      },
+      {
+        "name": "orientation",
+        "key": "config.orientation",
+        "description": "Orientation",
+        "options": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "name": "groupBy",
+        "key": "config.groupBy",
+        "type": "indicator",
+        "description": "Groups"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
+        "name": "linearAxis",
+        "key": "config.linearAxis",
+        "properties": [
+          {
+            "name": "indicator",
+            "type": "indicator",
+            "description": "Data Indicator",
+            "key": "config.linearAxis.indicator"
+          },
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.linearAxis.showAxis"
+          },
+          {
+            "name": "showGridlines",
+            "type": "boolean",
+            "description": "Show Grid lines",
+            "key": "config.linearAxis.showGridlines"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.linearAxis.ticking"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Label",
+            "key": "config.linearAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.linearAxis.axisMargin"
+          },
+          {
+            "name": "axisMinimum",
+            "type": "number",
+            "description": "Minimum",
+            "key": "config.linearAxis.axisMinimum"
+          },
+          {
+            "name": "axisMaximum",
+            "type": "number",
+            "description": "Maximum",
+            "key": "config.linearAxis.axisMaximum"
+          }
+        ],
+        "description": "Linear Axis"
+      },
+      {
+        "name": "categoryAxis",
+        "key": "config.categoryAxis",
+        "properties": [
+          {
+            "name": "indicator",
+            "type": "indicator",
+            "description": "Data Indicator",
+            "key": "config.categoryAxis.indicator"
+          },
+          {
+            "name": "showAxis",
+            "type": "boolean",
+            "description": "Show Axis",
+            "key": "config.categoryAxis.showAxis"
+          },
+          {
+            "name": "ticking",
+            "options": [
+              "all",
+              "even",
+              "odd",
+              "sparse"
+            ],
+            "default": "all",
+            "description": "Ticking method",
+            "key": "config.categoryAxis.ticking"
+          },
+          {
+            "name": "axisLabel",
+            "type": "string",
+            "description": "Axis Label",
+            "key": "config.categoryAxis.axisLabel"
+          },
+          {
+            "name": "axisMargin",
+            "type": "number",
+            "description": "Margin",
+            "key": "config.categoryAxis.axisMargin"
+          },
+          {
+            "name": "innerPadding",
+            "type": "number",
+            "description": "Inner Padding",
+            "key": "config.categoryAxis.innerPadding"
+          },
+          {
+            "name": "outerPadding",
+            "type": "number",
+            "description": "Outer Padding",
+            "key": "config.categoryAxis.outerPadding"
+          }
+        ],
+        "description": "Category Axis"
+      },
+      {
+        "name": "legend",
+        "key": "config.legend",
+        "properties": [
+          {
+            "name": "showLegend",
+            "type": "boolean",
+            "description": "Show Legend",
+            "key": "config.legend.showLegend"
+          },
+          {
+            "name": "symbol",
+            "options": [
+              "circle",
+              "square",
+              "cross",
+              "diamond",
+              "triangle",
+              "star",
+              "wye"
+            ],
+            "default": "square",
+            "description": "Legend symbol",
+            "key": "config.legend.symbol"
+          },
+          {
+            "name": "alignment",
+            "options": [
+              "left",
+              "center",
+              "right"
+            ],
+            "default": "left",
+            "description": "Legend Alignment",
+            "key": "config.legend.alignment"
+          },
+          {
+            "name": "position",
+            "options": [
+              "bottom",
+              "right"
+            ],
+            "default": "bottom",
+            "description": "Legend Position",
+            "key": "config.legend.position"
+          },
+          {
+            "name": "rowSpan",
+            "type": "number",
+            "description": "Maximum entries per row",
+            "key": "config.legend.rowSpan"
+          }
+        ],
+        "description": "Legend"
       }
     ]
   },
@@ -731,6 +974,12 @@
         "key": "config.colors",
         "type": "Array.<string>",
         "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
       },
       {
         "name": "linearAxis",
@@ -957,6 +1206,12 @@
         "description": "Colors"
       },
       {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
         "name": "linearAxis",
         "key": "config.linearAxis",
         "properties": [
@@ -1181,6 +1436,12 @@
         "description": "Colors"
       },
       {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
         "name": "linearAxis",
         "key": "config.linearAxis",
         "properties": [
@@ -1387,6 +1648,24 @@
         ]
       },
       {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
+        "name": "showLabels",
+        "key": "config.showLabels",
+        "type": "boolean",
+        "description": "Show Labels"
+      },
+      {
         "name": "tree",
         "key": "config.tree",
         "properties": [
@@ -1432,6 +1711,12 @@
         "key": "config.colors",
         "type": "Array.<string>",
         "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
       },
       {
         "name": "circular",
@@ -1577,6 +1862,12 @@
         "key": "config.colors",
         "type": "Array.<string>",
         "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
       },
       {
         "name": "linearAxis",
@@ -1803,6 +2094,12 @@
         "description": "Colors"
       },
       {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
         "name": "linearAxis",
         "key": "config.linearAxis",
         "properties": [
@@ -2000,24 +2297,6 @@
             "description": "Tiling Method",
             "key": "config.treemap.tile"
           }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "TreemapConfig",
-    "properties": [
-      {
-        "name": "tile",
-        "key": "config.tile",
-        "description": "Tiling Method",
-        "options": [
-          "binary",
-          "dice",
-          "slice",
-          "sliceDice",
-          "squarify",
-          "resquarify"
         ]
       }
     ]

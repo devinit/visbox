@@ -46,6 +46,7 @@
             divisor = parseFloat(flatConfig.unit_divisor),
             linearAxis = flatConfig["config.linearAxis.indicator"];
             var data = filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,linearAxis,csvDat);
+            console.log(data);
             DiCharts.draw({element:document.getElementById('chart'),config:config,data:data});
         });
     </script>

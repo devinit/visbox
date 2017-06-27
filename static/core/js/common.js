@@ -84,7 +84,6 @@ function filter_and_sort(filter_by,selectedFilter,sort,sort_direction,divisor,li
   }else{
     var sortedData = data;
   }
-
     return(sortedData);
 }
 
