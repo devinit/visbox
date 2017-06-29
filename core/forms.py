@@ -49,6 +49,7 @@ class VisForm(ModelForm):
         fieldCategories["config.linearAxis"] = "Axis options"     
         fieldCategories["config.categoryAxis"] = "Axis options"
         fieldCategories["config.circular"] = "Axis options"
+	fieldCategories["config.tree"] = "Axis options"
         fieldCategories["unit_divisor"] = "Axis options"
         
         fieldCategories["config.colors"] = "Colours"
