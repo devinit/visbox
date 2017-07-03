@@ -179,11 +179,11 @@ function form2config(formSelector) {
 
 //Get and Set Params functions
 function getParams() {
-    var paramArr = window.location.search.substr(1).split("&")[0] == "" ? [] : window.location.search.substr(1).split("&");
+    var paramArr = window.location.search.substr(1).split("&")[0] === "" ? [] : window.location.search.substr(1).split("&");
     var params = {};
     for (var i = 0; i < paramArr.length; i++) {
         var param = paramArr[i];
-        params[param.split("=")[0]] = param.split("=")[1]
-    };
-    return params
-};
+        params[param.split("=")[0]] = decodeURI(param.split("=")[1]);
+    }
+    return params;
+}
