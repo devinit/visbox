@@ -18,13 +18,14 @@
 		<div id="chart"></div>
     </div>
     <script>
+	var params = getParams();
     var config = JSON.parse('{{visualisation.get_config|safe}}');
     var flatConfig = JSON.parse('{{visualisation.get_flat_config|safe}}');
     resize_via_config(".chart",flatConfig);
     {% if dataset %}
     d3.csv("{% url 'core.views.csv' dataset.pk %}",function(error, csvDat) {
         var filter_by = flatConfig.filter_by,
-        selectedFilter = flatConfig.filter_selection,
+        selectedFilter = ('filter' in params)?params.filter:flatConfig.filter_selection,
         sort = flatConfig.sort,
         sort_direction = flatConfig.sort_direction,
         divisor = parseFloat(flatConfig.unit_divisor),
@@ -35,7 +36,7 @@
     {% else %}
         var csvDat = JSON.parse('{{dataString|safe}}');
         var filter_by = flatConfig.filter_by,
-        selectedFilter = flatConfig.filter_selection,
+        selectedFilter = ('filter' in params)?params.filter:flatConfig.filter_selection,,
         sort = flatConfig.sort,
         sort_direction = flatConfig.sort_direction,
         divisor = parseFloat(flatConfig.unit_divisor),
