@@ -1660,10 +1660,27 @@
         "description": "Color Indicator"
       },
       {
-        "name": "showLabels",
-        "key": "config.showLabels",
-        "type": "boolean",
-        "description": "Show Labels"
+        "name": "labeling",
+        "key": "config.labeling",
+        "properties": [
+          {
+            "name": "showLabels",
+            "type": "boolean",
+            "default": true,
+            "key": "config.labeling.showLabels"
+          },
+          {
+            "name": "prefix",
+            "type": "string",
+            "key": "config.labeling.prefix"
+          },
+          {
+            "name": "suffix",
+            "type": "string",
+            "key": "config.labeling.suffix"
+          }
+        ],
+        "description": "Label Configuration"
       },
       {
         "name": "tree",
@@ -2298,6 +2315,82 @@
             "key": "config.treemap.tile"
           }
         ]
+      },
+      {
+        "name": "title",
+        "key": "config.title",
+        "type": "string",
+        "description": "Title"
+      },
+      {
+        "name": "titleAlignment",
+        "key": "config.titleAlignment",
+        "description": "Title Alignment",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ]
+      },
+      {
+        "name": "colors",
+        "key": "config.colors",
+        "type": "Array.<string>",
+        "description": "Colors"
+      },
+      {
+        "name": "coloring",
+        "key": "config.coloring",
+        "type": "indicator",
+        "description": "Color Indicator"
+      },
+      {
+        "name": "labeling",
+        "key": "config.labeling",
+        "properties": [
+          {
+            "name": "showLabels",
+            "type": "boolean",
+            "default": true,
+            "key": "config.labeling.showLabels"
+          },
+          {
+            "name": "prefix",
+            "type": "string",
+            "key": "config.labeling.prefix"
+          },
+          {
+            "name": "suffix",
+            "type": "string",
+            "key": "config.labeling.suffix"
+          }
+        ],
+        "description": "Label Configuration"
+      },
+      {
+        "name": "tree",
+        "key": "config.tree",
+        "properties": [
+          {
+            "name": "id",
+            "type": "indicator",
+            "description": "ID Reference",
+            "key": "config.tree.id"
+          },
+          {
+            "name": "parent",
+            "type": "indicator",
+            "description": "Parent Indicator",
+            "key": "config.tree.parent"
+          },
+          {
+            "name": "value",
+            "type": "indicator",
+            "description": "Value Indicator",
+            "key": "config.tree.value"
+          }
+        ],
+        "description": "Hierachy Configuration"
       }
     ]
   }
