@@ -29,7 +29,8 @@ def pull_ddw(modeladmin,request,queryset):
     for ddw_dataset in ddw_datasets:
         dataset = Dataset()
         dataset.name = basename(ddw_dataset)
-        dataset.data = open(ddw_dataset)
+        f = open(ddw_dataset,"r")
+        dataset.data = f.read()
         dataset.creator = User.objects.get(username=request.user)
         dataset.sep=","
         dataset.save()
