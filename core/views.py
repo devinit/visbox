@@ -15,9 +15,6 @@ from utils import *
 from django.core.files.temp import NamedTemporaryFile
 import decimal
 from django.conf import settings
-from glob import glob
-from os.path import basename
-from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
     user = request.user
@@ -55,9 +52,7 @@ def start(request):
         form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
     staff_datasets = Dataset.objects.filter(creator__in=staff)
-    ddw_dataset_paths = glob(settings.STATIC_ROOT+'/core/data/*.csv')
-    ddw_datasets = [basename(path) for path in ddw_dataset_paths]
-    return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"ddw_datasets":ddw_datasets,"form":form})
+    return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"form":form})
 
 @login_required
 def gallery(request):
@@ -70,13 +65,8 @@ def dataset(request,datasetPK):
     user = request.user
     staff = User.objects.filter(is_staff=True)
     templates = Visualisation.objects.filter(save_as_template=True,creator__in=staff)
-    try:
-        dataset = Dataset.objects.get(pk=datasetPK)
-        dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    except (ObjectDoesNotExist, ValueError) as e:
-        dataset = Dataset()
-        dataset.df = pd.read_csv(settings.STATIC_ROOT+'/core/data/%s' % datasetPK)
-    
+    dataset = get_object_or_404(Dataset,pk=datasetPK)
+    dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
     dataset.header = list(dataset.df)
     dataset.types = [(header, dataset.df.dtypes[header]) for header in dataset.header]
     dataset.table = dataset.df.to_html()

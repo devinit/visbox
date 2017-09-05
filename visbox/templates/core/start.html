@@ -16,9 +16,6 @@
     {% for dataset in staff_datasets %}
         <option value="{{dataset.pk}}">{{dataset.name}} (Staff Dataset; {{dataset.created}})</option>
     {% endfor %}
-    {% for dataset in ddw_datasets %}
-    <option value="{{dataset}}">{{dataset}} (DDW clone)</option>
-    {% endfor %}
     </select>
     <script>
         // using jQuery
