@@ -15,6 +15,7 @@ from utils import *
 from django.core.files.temp import NamedTemporaryFile
 import decimal
 from django.conf import settings
+from glob import glob
 
 def index(request):
     user = request.user
@@ -52,7 +53,8 @@ def start(request):
         form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
     staff_datasets = Dataset.objects.filter(creator__in=staff)
-    return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"form":form})
+    ddw_datasets = glob(settings.STATIC_ROOT+'/core/data/*.csv')
+    return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"ddw_datasets":ddw_datasets,"form":form})
 
 @login_required
 def gallery(request):
