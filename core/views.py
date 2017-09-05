@@ -73,9 +73,9 @@ def dataset(request,datasetPK):
     try:
         dataset = Dataset.objects.get(pk=datasetPK)
         dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist, ValueError:
         dataset = Dataset()
-        dataset.df = pd.read_csv(settings.STATIC_ROOT+'/core/data/%s.csv' % datasetPK)
+        dataset.df = pd.read_csv(settings.STATIC_ROOT+'/core/data/%s' % datasetPK)
     
     dataset.header = list(dataset.df)
     dataset.types = [(header, dataset.df.dtypes[header]) for header in dataset.header]
