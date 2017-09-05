@@ -16,6 +16,7 @@ from django.core.files.temp import NamedTemporaryFile
 import decimal
 from django.conf import settings
 from glob import glob
+from os.path import basename
 
 def index(request):
     user = request.user
@@ -53,7 +54,8 @@ def start(request):
         form = UploadForm()
     datasets = Dataset.objects.filter(creator=user)
     staff_datasets = Dataset.objects.filter(creator__in=staff)
-    ddw_datasets = glob(settings.STATIC_ROOT+'/core/data/*.csv')
+    ddw_dataset_paths = glob(settings.STATIC_ROOT+'/core/data/*.csv')
+    ddw_datasets = [basename(path) for path in ddw_dataset_paths]
     return render(request,'core/start.html', {"user":user,"datasets":datasets,"staff_datasets":staff_datasets,"ddw_datasets":ddw_datasets,"form":form})
 
 @login_required
