@@ -2358,7 +2358,7 @@
             "name": "showValues",
             "type": "boolean",
             "default": true,
-            "key": "config.labeling.showPercents"
+            "key": "config.labeling.showValues"
           },
           {
             "name": "showPercents",
