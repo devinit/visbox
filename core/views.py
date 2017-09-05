@@ -73,7 +73,7 @@ def dataset(request,datasetPK):
     try:
         dataset = Dataset.objects.get(pk=datasetPK)
         dataset.df = pd.read_csv(StringIO(dataset.data),sep=dataset.sep)
-    except ObjectDoesNotExist, ValueError:
+    except (ObjectDoesNotExist, ValueError) as e:
         dataset = Dataset()
         dataset.df = pd.read_csv(settings.STATIC_ROOT+'/core/data/%s' % datasetPK)
     
