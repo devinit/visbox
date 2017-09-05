@@ -2355,6 +2355,18 @@
             "key": "config.labeling.showLabels"
           },
           {
+            "name": "showValues",
+            "type": "boolean",
+            "default": true,
+            "key": "config.labeling.showPercents"
+          },
+          {
+            "name": "showPercents",
+            "type": "boolean",
+            "default": true,
+            "key": "config.labeling.showPercents"
+          },
+          {
             "name": "prefix",
             "type": "string",
             "key": "config.labeling.prefix"
